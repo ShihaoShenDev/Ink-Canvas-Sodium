@@ -398,9 +398,15 @@ namespace Ink_Canvas {
                 lockedStrokeSelectionBorderHandleType = StrokeSelectionBorderHandlesEnum.Rotate;
             }
 
-            // capture
-            // TODO 这里还需要对触摸屏幕的单个TouchDevice进行Capture
+            // capture mouse and all touch devices
             bd.CaptureMouse();
+            foreach (var device in InputManager.Current.PrimaryMouseDevice.SynchronizedDevices)
+            {
+                if (device is TouchDevice touchDevice)
+                {
+                    bd.CaptureTouch(touchDevice);
+                }
+            }
 
             // hide selectionToolBar
             BorderStrokeSelectionControl.Visibility = Visibility.Collapsed;
@@ -453,9 +459,9 @@ namespace Ink_Canvas {
             isLockedStrokeSelectionHandle = false;
             lockedStrokeSelectionBorderHandleType = null;
 
-            // release capture
-            // TODO 这里还需要对触摸屏幕的单个TouchDevice进行ReleaseCapture
+            // release mouse and all touch devices
             lockedStrokeSelectionHandle.ReleaseMouseCapture();
+            lockedStrokeSelectionHandle.ReleaseAllTouchCaptures();
 
             // unlock
             lockedStrokeSelectionHandle = null;
@@ -536,33 +542,30 @@ namespace Ink_Canvas {
                 final_h = Math.Round(((Rect)originalSelectionBounds).Height * Math.Max(scaleW, scaleH),0);
             }
 
-            if (final_w >= 1 && final_h >= 1) {
-                // TODO 此處還需要修改行為，讓其能夠縮放到1x1；
-                StrokeSelectionBorder.Width = final_w >=1 ? final_w : 1;
-                StrokeSelectionBorder.Height = final_h >=1 ? final_h : 1;
-                
-                System.Windows.Controls.Canvas.SetLeft(StrokeSelectionBorder, l);
-                System.Windows.Controls.Canvas.SetTop(StrokeSelectionBorder, t);
+            StrokeSelectionBorder.Width = Math.Max(final_w, 1);
+            StrokeSelectionBorder.Height = Math.Max(final_h, 1);
 
-                resizingLastPoint = rlp;
+            System.Windows.Controls.Canvas.SetLeft(StrokeSelectionBorder, l);
+            System.Windows.Controls.Canvas.SetTop(StrokeSelectionBorder, t);
 
-                if (!(final_w < 96 && final_h < 64)) StrokeSelectionSizeToast.Visibility = Visibility.Visible;
-                else StrokeSelectionSizeToast.Visibility = Visibility.Collapsed;
+            resizingLastPoint = rlp;
 
-                // resize toast text
-                ((TextBlock)StrokeSelectionSizeToastInner.Children[0]).Text = final_w.ToString();
-                ((TextBlock)StrokeSelectionSizeToastInner.Children[2]).Text = final_h.ToString();
+            if (!(final_w < 96 && final_h < 64)) StrokeSelectionSizeToast.Visibility = Visibility.Visible;
+            else StrokeSelectionSizeToast.Visibility = Visibility.Collapsed;
 
-                // record resized bounds
-                var transform = StrokeSelectionBorder.TransformToVisual(Main_Grid);
-                var ori_lt = transform.Transform(new Point(0, 0));
-                var ori_rb = transform.Transform(new Point(StrokeSelectionBorder.Width, StrokeSelectionBorder.Height));
-                resizedSelectionBounds = new Rect(ori_lt, ori_rb);
+            // resize toast text
+            ((TextBlock)StrokeSelectionSizeToastInner.Children[0]).Text = final_w.ToString();
+            ((TextBlock)StrokeSelectionSizeToastInner.Children[2]).Text = final_h.ToString();
 
-                // preview resize
-                SelectedStrokesResize(inkCanvas.GetSelectedStrokes(), (StrokeSelectionBorderHandlesEnum)lockedStrokeSelectionBorderHandleType,
-                    (Rect)originalSelectionBounds, (Rect)resizedSelectionBounds, true);
-            }
+            // record resized bounds
+            var transform = StrokeSelectionBorder.TransformToVisual(Main_Grid);
+            var ori_lt = transform.Transform(new Point(0, 0));
+            var ori_rb = transform.Transform(new Point(StrokeSelectionBorder.Width, StrokeSelectionBorder.Height));
+            resizedSelectionBounds = new Rect(ori_lt, ori_rb);
+
+            // preview resize
+            SelectedStrokesResize(inkCanvas.GetSelectedStrokes(), (StrokeSelectionBorderHandlesEnum)lockedStrokeSelectionBorderHandleType,
+                (Rect)originalSelectionBounds, (Rect)resizedSelectionBounds, true);
         }
 
         private Point? movingFirstPoint = null;
