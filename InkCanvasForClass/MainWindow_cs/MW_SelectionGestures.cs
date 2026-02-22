@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -400,12 +401,23 @@ namespace Ink_Canvas {
 
             // capture mouse and all touch devices
             bd.CaptureMouse();
-            foreach (var device in InputManager.Current.PrimaryMouseDevice.SynchronizedDevices)
-            {
-                if (device is TouchDevice touchDevice)
-                {
-                    bd.CaptureTouch(touchDevice);
+            try {
+                var primaryMouseDevice = InputManager.Current.PrimaryMouseDevice;
+                if (primaryMouseDevice != null) {
+                    // 使用反射检查 SynchronizedDevices 是否可用
+                    var synchronizedDevicesProperty = primaryMouseDevice.GetType().GetProperty("SynchronizedDevices");
+                    if (synchronizedDevicesProperty?.GetValue(primaryMouseDevice) is System.Collections.IEnumerable devices) {
+                        foreach (var device in devices) {
+                            if (device is TouchDevice touchDevice) {
+                                bd.CaptureTouch(touchDevice);
+                            }
+                        }
+                    }
                 }
+            }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error capturing touch devices: {ex}", LogHelper.LogType.Error);
+                // 如果捕获触摸设备失败，继续执行，不影响鼠标捕获
             }
 
             // hide selectionToolBar
