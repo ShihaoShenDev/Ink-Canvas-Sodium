@@ -1592,9 +1592,12 @@ namespace Ink_Canvas {
 
         public void ShapeDrawingV2Init() {
             ShapeDrawingV2Layer.MainWindow = this;
+            // Disabled - FloatingToolBarV2 is disabled but not deleted
+            /*
             FloatingToolBarV2.ShapeDrawingV2_ShapeSelectedEvent += (sender, args) => {
                 ShapeDrawingV2Layer.StartShapeDrawing(args.Type, args.Name);
             };
+            */
         }
 
         public enum ShapeDrawingType {

@@ -1326,6 +1326,8 @@ namespace Ink_Canvas {
         #region SelectionV2 Popup
 
         private void SelectionV2Init() {
+            // Disabled - FloatingToolBarV2 is disabled but not deleted
+            /*
             FloatingToolBarV2.SelectionV2_SelectAllEvent += (sender, args) => {
                 inkCanvas.Select(inkCanvas.Strokes);
                 FloatingToolBarV2.SelectionPopupV2.IsOpen = false;
@@ -1372,6 +1374,7 @@ namespace Ink_Canvas {
                 ComboBoxSelectionMethod.SelectedIndex = (int)args.NowMode;
                 SaveSettingsToFile();
             };
+            */
         }
 
         #endregion

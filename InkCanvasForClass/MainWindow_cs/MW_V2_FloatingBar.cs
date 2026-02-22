@@ -16,6 +16,8 @@ namespace Ink_Canvas {
         public FloatingToolBarV2 FloatingToolBarV2;
 
         private void InitFloatingToolbarV2() {
+            // Disabled - FloatingToolBarV2 is disabled but not deleted
+            /*
             FloatingToolBarV2 = new FloatingToolBarV2();
             FloatingToolBarV2.Topmost = false;
             FloatingToolBarV2.Show();
@@ -23,6 +25,7 @@ namespace Ink_Canvas {
 
             FloatingToolBarV2.FloatingBarToolSelectionChanged += FloatingToolBarV2_ToolSelectionChanged;
             FloatingToolBarV2.FloatingBarToolButtonClicked += FloatingToolBarV2_ToolButtonClicked;
+            */
         }
 
         #region 工具切换
@@ -124,14 +127,22 @@ namespace Ink_Canvas {
         #endregion
 
         private void FloatingToolBarV2_ToolSelectionChanged(object sender, EventArgs e) {
+            // Disabled - FloatingToolBarV2 is disabled but not deleted
+            return;
+            /*
             var item = (FloatingBarItem)sender;
             if (item.ToolType == ICCToolsEnum.CursorMode) SwitchToCursorMode();
             if (item.ToolType == ICCToolsEnum.PenMode) SwitchToPenMode();
+            */
         }
 
         private void FloatingToolBarV2_ToolButtonClicked(object sender, EventArgs e) {
+            // Disabled - FloatingToolBarV2 is disabled but not deleted
+            return;
+            /*
             var item = (FloatingBarItem)sender;
             if (item.Name == "Clear") ClearInkCanvasStrokes(Settings.Canvas.ClearCanvasAndClearTimeMachine,false);
+            */
         }
     }
 }

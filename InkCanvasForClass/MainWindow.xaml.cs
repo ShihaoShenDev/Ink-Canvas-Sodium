@@ -231,7 +231,7 @@ namespace Ink_Canvas {
 
             isLoaded = true;
 
-            InitFloatingToolbarV2();
+            // InitFloatingToolbarV2(); // Disabled - FloatingToolBarV2 is disabled but not deleted
 
             BlackBoardLeftSidePageListView.ItemsSource = blackBoardSidePageListViewObservableCollection;
             BlackBoardRightSidePageListView.ItemsSource = blackBoardSidePageListViewObservableCollection;
@@ -265,8 +265,8 @@ namespace Ink_Canvas {
             StylusInvertedListenerInit();
 
             PenPaletteV2Init();
-            SelectionV2Init();
-            ShapeDrawingV2Init();
+            // SelectionV2Init(); // Disabled - FloatingToolBarV2 is disabled but not deleted
+            // ShapeDrawingV2Init(); // Disabled - FloatingToolBarV2 is disabled but not deleted
 
             InitStorageManagementModule();
 
