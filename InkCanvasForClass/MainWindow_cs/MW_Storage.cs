@@ -258,7 +258,7 @@ namespace Ink_Canvas {
             StorageNowLocationTextBlock.Text = $"当前位置：{path}";
             DriveInfo[] allDrives = DriveInfo.GetDrives();
             var driveArr = allDrives.Where((info, i) => info.Name.Substring(0,1)==path.Substring(0,1)).ToArray();
-            if (driveArr.Length > 0) {
+            if (driveArr.Length > 0 && driveArr[0].TotalSize > 0) {
                 StorageDiskUsageTextBlock.Visibility = Visibility.Visible;
                 var freeSpace = driveArr[0].TotalFreeSpace;
                 var usedSpace = driveArr[0].TotalSize - driveArr[0].TotalFreeSpace;
@@ -268,7 +268,7 @@ namespace Ink_Canvas {
                 var dirFilecount = await GetDirectoryFilesCount(path);
                 StorageDirectoryUsageTextBlock.Text = $"目录占用情况：已用 {formatedDirSize}，共 {dirFilecount} 个文件";
                 var usedBorderWidth = Math.Round(388 * ((double)usedSpace / (double)(driveArr[0].TotalSize)), 1);
-                var ICCUsedBorderWidth = Math.Round(usedBorderWidth * ((double)dirsize / (double)usedSpace), 1);
+                var ICCUsedBorderWidth = usedSpace > 0 ? Math.Round(usedBorderWidth * ((double)dirsize / (double)usedSpace), 1) : 0;
                 usedBorderWidth = usedBorderWidth - ICCUsedBorderWidth;
                 ICCDirectoryStorageAnalyzeGroup.Visibility = dirsize == 0 ? Visibility.Collapsed : Visibility.Visible;
                 DiskUsageUsedSpaceBorder.Width = usedBorderWidth;
@@ -281,22 +281,22 @@ namespace Ink_Canvas {
                 ClearCacheFilesButton.IsEnabled = cachesSize != 0;
                 ClearAutoSavedSnapshotButton.IsEnabled = assSize != 0;
                 StorageDirectoryAutoSavedInkUsageBorder.Width =
-                    Math.Round(388 * ((double)asiSize / (double)dirsize), 1);
+                    dirsize > 0 ? Math.Round(388 * ((double)asiSize / (double)dirsize), 1) : 0;
                 StorageDirectoryAutoSavedSnapshotUsageBorder.Width =
-                    Math.Round(388 * ((double)assSize / (double)dirsize), 1);
-                StorageDirectoryExportedInkUsageBorder.Width = Math.Round(388 * ((double)eiSize / (double)dirsize), 1);
-                StorageDirectoryQuotedPhotoUsageBorder.Width = Math.Round(388 * ((double)qpSize / (double)dirsize), 1);
-                StorageDirectoryCachesUsageBorder.Width = Math.Round(388 * ((double)cachesSize / (double)dirsize), 1);
+                    dirsize > 0 ? Math.Round(388 * ((double)assSize / (double)dirsize), 1) : 0;
+                StorageDirectoryExportedInkUsageBorder.Width = dirsize > 0 ? Math.Round(388 * ((double)eiSize / (double)dirsize), 1) : 0;
+                StorageDirectoryQuotedPhotoUsageBorder.Width = dirsize > 0 ? Math.Round(388 * ((double)qpSize / (double)dirsize), 1) : 0;
+                StorageDirectoryCachesUsageBorder.Width = dirsize > 0 ? Math.Round(388 * ((double)cachesSize / (double)dirsize), 1) : 0;
                 StorageAutoSavedInkDescription.Text =
-                    $"{Math.Round(100 * ((double)asiSize / (double)dirsize), 1)}% 、{FormatBytes(asiSize)}";
+                    dirsize > 0 ? $"{Math.Round(100 * ((double)asiSize / (double)dirsize), 1)}% 、{FormatBytes(asiSize)}" : $"0% 、{FormatBytes(asiSize)}";
                 StorageAutoSavedSnapshotDescription.Text =
-                    $"{Math.Round(100 * ((double)assSize / (double)dirsize), 1)}% 、{FormatBytes(assSize)}";
+                    dirsize > 0 ? $"{Math.Round(100 * ((double)assSize / (double)dirsize), 1)}% 、{FormatBytes(assSize)}" : $"0% 、{FormatBytes(assSize)}";
                 StorageExportedInkDescription.Text =
-                    $"{Math.Round(100 * ((double)eiSize / (double)dirsize), 1)}% 、{FormatBytes(eiSize)}";
+                    dirsize > 0 ? $"{Math.Round(100 * ((double)eiSize / (double)dirsize), 1)}% 、{FormatBytes(eiSize)}" : $"0% 、{FormatBytes(eiSize)}";
                 StorageQuotedPhotosDescription.Text =
-                    $"{Math.Round(100 * ((double)qpSize / (double)dirsize), 1)}% 、{FormatBytes(qpSize)}";
+                    dirsize > 0 ? $"{Math.Round(100 * ((double)qpSize / (double)dirsize), 1)}% 、{FormatBytes(qpSize)}" : $"0% 、{FormatBytes(qpSize)}";
                 StorageCachesDescription.Text =
-                    $"{Math.Round(100 * ((double)cachesSize / (double)dirsize), 1)}% 、{FormatBytes(cachesSize)}";
+                    dirsize > 0 ? $"{Math.Round(100 * ((double)cachesSize / (double)dirsize), 1)}% 、{FormatBytes(cachesSize)}" : $"0% 、{FormatBytes(cachesSize)}";
                 StorageAnalazeWaitingGroup.Visibility = Visibility.Collapsed;
                 StorageAnalazeGroup.Visibility = Visibility.Visible;
                 isAnalyzingStorageInfo = false;
