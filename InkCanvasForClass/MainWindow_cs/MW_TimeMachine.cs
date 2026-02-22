@@ -166,18 +166,22 @@ namespace Ink_Canvas {
             }
 
 
-            foreach (var stroke in e?.Removed) {
-                stroke.StylusPointsChanged -= Stroke_StylusPointsChanged;
-                stroke.StylusPointsReplaced -= Stroke_StylusPointsReplaced;
-                stroke.DrawingAttributesChanged -= Stroke_DrawingAttributesChanged;
-                StrokeInitialHistory.Remove(stroke);
+            if (e?.Removed != null) {
+                foreach (var stroke in e.Removed) {
+                    stroke.StylusPointsChanged -= Stroke_StylusPointsChanged;
+                    stroke.StylusPointsReplaced -= Stroke_StylusPointsReplaced;
+                    stroke.DrawingAttributesChanged -= Stroke_DrawingAttributesChanged;
+                    StrokeInitialHistory.Remove(stroke);
+                }
             }
 
-            foreach (var stroke in e?.Added) {
-                stroke.StylusPointsChanged += Stroke_StylusPointsChanged;
-                stroke.StylusPointsReplaced += Stroke_StylusPointsReplaced;
-                stroke.DrawingAttributesChanged += Stroke_DrawingAttributesChanged;
-                StrokeInitialHistory[stroke] = stroke.StylusPoints.Clone();
+            if (e?.Added != null) {
+                foreach (var stroke in e.Added) {
+                    stroke.StylusPointsChanged += Stroke_StylusPointsChanged;
+                    stroke.StylusPointsReplaced += Stroke_StylusPointsReplaced;
+                    stroke.DrawingAttributesChanged += Stroke_DrawingAttributesChanged;
+                    StrokeInitialHistory[stroke] = stroke.StylusPoints.Clone();
+                }
             }
 
             if (_currentCommitType == CommitReason.CodeInput || _currentCommitType == CommitReason.ShapeDrawing) return;

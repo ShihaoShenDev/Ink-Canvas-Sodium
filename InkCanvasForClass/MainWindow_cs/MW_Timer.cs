@@ -328,5 +328,25 @@ namespace Ink_Canvas {
                 LogHelper.WriteLogToFile(ex.ToString(), LogHelper.LogType.Error);
             }
         }
+
+        public void DisposeTimers() {
+            try {
+                timerCheckPPT?.Stop();
+                timerCheckPPT?.Dispose();
+                timerKillProcess?.Stop();
+                timerKillProcess?.Dispose();
+                timerCheckAutoFold?.Stop();
+                timerCheckAutoFold?.Dispose();
+                timerCheckAutoUpdateWithSilence?.Stop();
+                timerCheckAutoUpdateWithSilence?.Dispose();
+                timerDisplayTime?.Stop();
+                timerDisplayTime?.Dispose();
+                timerDisplayDate?.Stop();
+                timerDisplayDate?.Dispose();
+            }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error disposing timers: {ex}", LogHelper.LogType.Error);
+            }
+        }
     }
 }

@@ -90,6 +90,9 @@ namespace Ink_Canvas.Helpers
 
         public TimeMachineHistory Undo()
         {
+            if (_currentIndex < 0 || _currentIndex >= _currentStrokeHistory.Count)
+                return null;
+
             var item = _currentStrokeHistory[_currentIndex];
             item.StrokeHasBeenCleared = !item.StrokeHasBeenCleared;
             _currentIndex--;
@@ -100,6 +103,9 @@ namespace Ink_Canvas.Helpers
 
         public TimeMachineHistory Redo()
         {
+            if (_currentIndex + 1 >= _currentStrokeHistory.Count)
+                return null;
+
             var item = _currentStrokeHistory[++_currentIndex];
             item.StrokeHasBeenCleared = !item.StrokeHasBeenCleared;
             NotifyUndoRedoState();

@@ -140,10 +140,10 @@ namespace Ink_Canvas {
 
         #region 墨迹回放（旧版，等待重构）
 
-        private bool isStopInkReplay = false;
-        private bool isPauseInkReplay = false;
-        private bool isRestartInkReplay = false;
-        private double inkReplaySpeed = 1;
+        private volatile bool isStopInkReplay = false;
+        private volatile bool isPauseInkReplay = false;
+        private volatile bool isRestartInkReplay = false;
+        private volatile double inkReplaySpeed = 1;
 
         private void InkCanvasForInkReplay_MouseDown(object sender, MouseButtonEventArgs e) {
             if (e.ClickCount == 2) {
