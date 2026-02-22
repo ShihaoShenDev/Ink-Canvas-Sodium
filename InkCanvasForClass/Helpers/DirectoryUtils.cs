@@ -52,10 +52,16 @@ namespace Ink_Canvas.Helpers {
 
                 try {
                     SetDirectoryLastWriteUtc(dirPath, lastWriteDate);
-                } catch { }
+                } catch (Exception ex) {
+                    LogHelper.WriteLogToFile($"Error setting directory last write time: {ex}", LogHelper.LogType.Error);
+                }
 
                 return true;
-            } catch (UnauthorizedAccessException) { } catch (Exception) { }
+            } catch (UnauthorizedAccessException) {
+                LogHelper.WriteLogToFile($"Unauthorized access to directory: {dirPath}", LogHelper.LogType.Error);
+            } catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error checking directory writability: {ex}", LogHelper.LogType.Error);
+            }
             return false;
         }
 

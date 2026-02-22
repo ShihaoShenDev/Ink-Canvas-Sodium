@@ -144,7 +144,9 @@ namespace Ink_Canvas {
                 inkCanvas.DeleteKeyCommandFired += InkCanvasDeleteCommandFiredEvent;
                 //inkCanvas.Gesture += InkCanvas_Gesture;
             }
-            catch { }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error loading pen canvas: {ex}", LogHelper.LogType.Error);
+            }
         }
 
         private void inkCanvas_EditingModeChanged(object sender, RoutedEventArgs e) {

@@ -127,43 +127,59 @@ namespace Ink_Canvas {
         private bool isChangingUserStorageSelectionProgramically = false;
 
         private void UpdateUserStorageSelection() {
-            // 先获取磁盘信息
-            DriveInfo[] allDrives = DriveInfo.GetDrives();
-            var fixedDrives = new List<string>() { };
-            foreach (var driveInfo in allDrives) {
-                if (driveInfo.Name.Contains("C") || !driveInfo.IsReady) continue;
-                fixedDrives.Add("d"+driveInfo.Name.Substring(0,1).ToLower());
-            }
+            try {
+                // 先获取磁盘信息
+                DriveInfo[] allDrives = DriveInfo.GetDrives();
+                var fixedDrives = new List<string>() { };
+                foreach (var driveInfo in allDrives) {
+                    if (driveInfo.Name.Contains("C") || !driveInfo.IsReady) continue;
+                    fixedDrives.Add("d"+driveInfo.Name.Substring(0,1).ToLower());
+                }
 
-            var integratedFolders = new List<string>() {
-                "fw", "fr", "fu", "fd" // fw - folder wendang ; fd - folder desktop ; fu - folder user ; fr - folder running
-            };
-            if (Settings.Storage.StorageLocation.Substring(0, 1) == "d") {
-                if (fixedDrives.Count == 0) {
-                    Settings.Storage.StorageLocation = "fw";
-                    SaveSettingsToFile();
-                    ComboBoxStoragePath.SelectedIndex = 0;
+                var integratedFolders = new List<string>() {
+                    "fw", "fr", "fu", "fd" // fw - folder wendang ; fd - folder desktop ; fu - folder user ; fr - folder running
+                };
+                if (Settings.Storage.StorageLocation.Substring(0, 1) == "d") {
+                    if (fixedDrives.Count == 0) {
+                        Settings.Storage.StorageLocation = "fw";
+                        SaveSettingsToFile();
+                    if (ComboBoxStoragePath != null) ComboBoxStoragePath.SelectedIndex = 0;
                 } else if (fixedDrives.Contains(Settings.Storage.StorageLocation)) {
-                    ComboBoxStoragePath.SelectedIndex = fixedDrives.IndexOf(Settings.Storage.StorageLocation);
+                    if (ComboBoxStoragePath != null) ComboBoxStoragePath.SelectedIndex = fixedDrives.IndexOf(Settings.Storage.StorageLocation);
                 } else {
-                    ComboBoxStoragePath.SelectedIndex = 0;
+                    if (ComboBoxStoragePath != null) ComboBoxStoragePath.SelectedIndex = 0;
                     Settings.Storage.StorageLocation = fixedDrives[0];
                     SaveSettingsToFile();
                 }
             } else if (Settings.Storage.StorageLocation.Substring(0, 1) == "f") {
                 if (integratedFolders.Contains(Settings.Storage.StorageLocation)) {
-                    ComboBoxStoragePath.SelectedIndex = fixedDrives.Count + integratedFolders.IndexOf(Settings.Storage.StorageLocation);
+                    if (ComboBoxStoragePath != null) ComboBoxStoragePath.SelectedIndex = fixedDrives.Count + integratedFolders.IndexOf(Settings.Storage.StorageLocation);
                 } else {
-                    ComboBoxStoragePath.SelectedIndex = fixedDrives.Count;
+                    if (ComboBoxStoragePath != null) ComboBoxStoragePath.SelectedIndex = fixedDrives.Count;
                     Settings.Storage.StorageLocation = "fw";
                     SaveSettingsToFile();
                 }
             } else if (Settings.Storage.StorageLocation.Substring(0, 1) == "c") {
-                ComboBoxStoragePath.SelectedIndex = storageLocationItems.Count - 1;
+                if (ComboBoxStoragePath != null) ComboBoxStoragePath.SelectedIndex = storageLocationItems.Count - 1;
             }
 
-            if (isLoaded) CustomStorageLocationGroup.Visibility = Settings.Storage.StorageLocation == "c-" ? Visibility.Visible : Visibility.Collapsed;
-            if (isLoaded) CustomStorageLocation.Text = Settings.Storage.UserStorageLocation;
+            if (isLoaded && CustomStorageLocationGroup != null) 
+                CustomStorageLocationGroup.Visibility = Settings.Storage.StorageLocation == "c-" ? Visibility.Visible : Visibility.Collapsed;
+            if (isLoaded && CustomStorageLocation != null) 
+                CustomStorageLocation.Text = Settings.Storage.UserStorageLocation;
+            }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error in UpdateUserStorageSelection: {ex}", LogHelper.LogType.Error);
+                // 确保有默认值
+                try {
+                    if (ComboBoxStoragePath != null && ComboBoxStoragePath.Items.Count > 0) {
+                        ComboBoxStoragePath.SelectedIndex = 0;
+                    }
+                }
+                catch {
+                    // 最后的保护
+                }
+            }
         }
 
         private void ComboBoxStoragePath_DropDownOpened(object sender, EventArgs e) {

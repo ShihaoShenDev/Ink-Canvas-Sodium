@@ -80,7 +80,9 @@ namespace Ink_Canvas {
                                     try {
                                         InkCanvasForInkReplay.Strokes.Remove(s);
                                     }
-                                    catch { }
+                                    catch (Exception ex) {
+                                        LogHelper.WriteLogToFile($"Error removing stroke during ink replay: {ex}", LogHelper.LogType.Error);
+                                    }
 
                                     stylusPoints.Add(stylusPoint);
                                     s = new Stroke(stylusPoints.Clone());
@@ -108,7 +110,9 @@ namespace Ink_Canvas {
                                     try {
                                         InkCanvasForInkReplay.Strokes.Remove(s);
                                     }
-                                    catch { }
+                                    catch (Exception ex) {
+                                        LogHelper.WriteLogToFile($"Error removing stroke during ink replay: {ex}", LogHelper.LogType.Error);
+                                    }
 
                                     stylusPoints.Add(stylusPoint);
                                     s = new Stroke(stylusPoints.Clone());

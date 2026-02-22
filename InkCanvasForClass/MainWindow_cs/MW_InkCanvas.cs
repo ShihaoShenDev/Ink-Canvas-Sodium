@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Input.StylusPlugIns;
 using System.Windows.Media;
 using iNKORE.UI.WPF.Helpers;
+using Ink_Canvas.Helpers;
 
 namespace Ink_Canvas {
 
@@ -211,8 +212,10 @@ namespace Ink_Canvas {
                 var stk = new Stroke(sp,da);
                 stk.Draw(drawingContext);
             }
-            catch { }
-            
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error drawing stroke in custom dynamic renderer: {ex}", LogHelper.LogType.Error);
+            }
+
         }
     }
 

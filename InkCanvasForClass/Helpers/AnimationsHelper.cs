@@ -73,7 +73,9 @@ namespace Ink_Canvas.Helpers
 
                 sb.Begin((FrameworkElement)element);
             }
-            catch { }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error in animation: {ex}", LogHelper.LogType.Error);
+            }
         }
 
         public static void ShowWithSlideFromLeftAndFade(UIElement element, double duration = 0.25)
@@ -113,7 +115,9 @@ namespace Ink_Canvas.Helpers
 
                 sb.Begin((FrameworkElement)element);
             }
-            catch { }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error in animation: {ex}", LogHelper.LogType.Error);
+            }
         }
 
         public static void ShowWithScaleFromLeft(UIElement element, double duration = 0.2)
@@ -156,7 +160,9 @@ namespace Ink_Canvas.Helpers
 
                 sb.Begin((FrameworkElement)element);
             }
-            catch { }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error in animation: {ex}", LogHelper.LogType.Error);
+            }
         }
 
         public static void ShowWithScaleFromRight(UIElement element, double duration = 0.2)
@@ -200,7 +206,9 @@ namespace Ink_Canvas.Helpers
 
                 sb.Begin((FrameworkElement)element);
             }
-            catch { }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error in animation: {ex}", LogHelper.LogType.Error);
+            }
         }
 
         public static void HideWithSlideAndFade(UIElement element, double duration = 0.15)
@@ -246,7 +254,9 @@ namespace Ink_Canvas.Helpers
                 element.RenderTransform = new TranslateTransform();
                 sb.Begin((FrameworkElement)element);
             }
-            catch { }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error in animation: {ex}", LogHelper.LogType.Error);
+            }
         }
 
         public static void HideWithFadeOut(UIElement element, double duration = 0.15)

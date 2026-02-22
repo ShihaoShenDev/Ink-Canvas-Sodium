@@ -64,14 +64,18 @@ namespace Ink_Canvas {
             try {
                 SymbolIconUndo_MouseUp(lastBorderMouseDownObject, null);
             }
-            catch { }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error executing undo hotkey: {ex}", LogHelper.LogType.Error);
+            }
         }
 
         private void HotKey_Redo(object sender, ExecutedRoutedEventArgs e) {
             try {
                 SymbolIconRedo_MouseUp(lastBorderMouseDownObject, null);
             }
-            catch { }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error executing redo hotkey: {ex}", LogHelper.LogType.Error);
+            }
         }
 
         private void HotKey_Clear(object sender, ExecutedRoutedEventArgs e) {

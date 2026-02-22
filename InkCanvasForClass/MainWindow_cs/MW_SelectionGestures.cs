@@ -1295,13 +1295,17 @@ namespace Ink_Canvas {
                             stroke.DrawingAttributes.Width *= md.Scale.X;
                             stroke.DrawingAttributes.Height *= md.Scale.Y;
                         }
-                        catch { }
+                        catch (Exception ex) {
+                            LogHelper.WriteLogToFile($"Error scaling stroke drawing attributes: {ex}", LogHelper.LogType.Error);
+                        }
                     }
 
                     updateBorderStrokeSelectionControlLocation();
                 }
             }
-            catch { }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error in BorderSelectionGestureBorder_ManipulationDelta: {ex}", LogHelper.LogType.Error);
+            }
         }
 
         #region SelectionV2 Popup

@@ -26,150 +26,184 @@ using Ink_Canvas.Windows.SettingsViews;
 using iNKORE.UI.WPF.Helpers;
 using iNKORE.UI.WPF.Modern.Controls;
 using OSVersionExtension;
+using Ink_Canvas.Helpers;
 
 namespace Ink_Canvas.Windows {
     public partial class SettingsWindow : Window {
 
         public SettingsWindow() {
-            InitializeComponent();
+            try {
+                InitializeComponent();
 
-            // 初始化侧边栏项目
-            SidebarItemsControl.ItemsSource = SidebarItems;
-            SidebarItems.Add(new SidebarItem() {
-                Type = SidebarItemType.Item,
-                Title = "启动时行为",
-                Name = "StartupItem",
-                IconSource = FindResource("StartupIcon") as DrawingImage,
-                Selected = false,
-            });
-            SidebarItems.Add(new SidebarItem() {
-                Type = SidebarItemType.Item,
-                Title = "画板和墨迹",
-                Name = "CanvasAndInkItem",
-                IconSource = FindResource("CanvasAndInkIcon") as DrawingImage,
-                Selected = false,
-            });
-            SidebarItems.Add(new SidebarItem() {
-                Type = SidebarItemType.Item,
-                Title = "手势操作",
-                Name = "GesturesItem",
-                IconSource = FindResource("GesturesIcon") as DrawingImage,
-                Selected = false,
-            });
-            SidebarItems.Add(new SidebarItem() {
-                Type = SidebarItemType.Separator
-            });
-            SidebarItems.Add(new SidebarItem() {
-                Type = SidebarItemType.Item,
-                Title = "个性化和外观",
-                Name = "AppearanceItem",
-                IconSource = FindResource("AppearanceIcon") as DrawingImage,
-                Selected = false,
-            });
-            SidebarItems.Add(new SidebarItem() {
-                Type = SidebarItemType.Item,
-                Title = "墨迹转形状",
-                Name = "InkRecognitionItem",
-                IconSource = FindResource("InkRecognitionIcon") as DrawingImage,
-                Selected = false,
-            });
-            SidebarItems.Add(new SidebarItem() {
-                Type = SidebarItemType.Item,
-                Title = "几何与形状绘制",
-                Name = "ShapeDrawingItem",
-                IconSource = FindResource("ShapeDrawingIcon") as DrawingImage,
-                Selected = false,
-            });
-            SidebarItems.Add(new SidebarItem() {
-                Type = SidebarItemType.Item,
-                Title = "自动化行为",
-                Name = "AutomationItem",
-                IconSource = FindResource("AutomationIcon") as DrawingImage,
-                Selected = false,
-            });
-            SidebarItems.Add(new SidebarItem() {
-                Type = SidebarItemType.Separator
-            });
-            SidebarItems.Add(new SidebarItem() {
-                Type = SidebarItemType.Item,
-                Title = "PowerPoint 支持",
-                Name = "PowerPointItem",
-                IconSource = FindResource("PowerPointIcon") as DrawingImage,
-                Selected = false,
-            });
-            SidebarItems.Add(new SidebarItem() {
-                Type = SidebarItemType.Item,
-                Title = "插件和脚本",
-                Name = "ExtensionsItem",
-                IconSource = FindResource("ExtensionsIcon") as DrawingImage,
-                Selected = false,
-            });
-            SidebarItems.Add(new SidebarItem() {
-                Type = SidebarItemType.Separator
-            });
-            SidebarItems.Add(new SidebarItem() {
-                Type = SidebarItemType.Item,
-                Title = "存储空间",
-                Name = "StorageItem",
-                IconSource = FindResource("StorageIcon") as DrawingImage,
-                Selected = false,
-            });
-            SidebarItems.Add(new SidebarItem() {
-                Type = SidebarItemType.Item,
-                Title = "截图和屏幕捕捉",
-                Name = "SnapshotItem",
-                IconSource = FindResource("SnapshotIcon") as DrawingImage,
-                Selected = false,
-            });
-            SidebarItems.Add(new SidebarItem() {
-                Type = SidebarItemType.Item,
-                Title = "点名器设置",
-                Name = "LuckyRandomItem",
-                IconSource = FindResource("LuckyRandomIcon") as DrawingImage,
-                Selected = false,
-            });
-            SidebarItems.Add(new SidebarItem() {
-                Type = SidebarItemType.Item,
-                Title = "高级选项",
-                Name = "AdvancedItem",
-                IconSource = FindResource("AdvancedIcon") as DrawingImage,
-                Selected = false,
-            });
-            SidebarItems.Add(new SidebarItem() {
-                Type = SidebarItemType.Item,
-                Title = "关于 InkCanvasForClass",
-                Name = "AboutItem",
-                IconSource = FindResource("AboutIcon") as DrawingImage,
-                Selected = false,
-            });
-            _selectedSidebarItemName = "AboutItem";
-            UpdateSidebarItemsSelection();
+                // 初始化侧边栏项目
+                SidebarItemsControl.ItemsSource = SidebarItems;
+                
+                // 安全地获取图标资源
+                DrawingImage GetIconResource(string key) {
+                    try {
+                        return FindResource(key) as DrawingImage;
+                    }
+                    catch (Exception) {
+                        return null;
+                    }
+                }
+                
+                SidebarItems.Add(new SidebarItem() {
+                    Type = SidebarItemType.Item,
+                    Title = "启动时行为",
+                    Name = "StartupItem",
+                    IconSource = GetIconResource("StartupIcon"),
+                    Selected = false,
+                });
+                SidebarItems.Add(new SidebarItem() {
+                    Type = SidebarItemType.Item,
+                    Title = "画板和墨迹",
+                    Name = "CanvasAndInkItem",
+                    IconSource = GetIconResource("CanvasAndInkIcon"),
+                    Selected = false,
+                });
+                SidebarItems.Add(new SidebarItem() {
+                    Type = SidebarItemType.Item,
+                    Title = "手势操作",
+                    Name = "GesturesItem",
+                    IconSource = GetIconResource("GesturesIcon"),
+                    Selected = false,
+                });
+                SidebarItems.Add(new SidebarItem() {
+                    Type = SidebarItemType.Separator
+                });
+                SidebarItems.Add(new SidebarItem() {
+                    Type = SidebarItemType.Item,
+                    Title = "个性化和外观",
+                    Name = "AppearanceItem",
+                    IconSource = GetIconResource("AppearanceIcon"),
+                    Selected = false,
+                });
+                SidebarItems.Add(new SidebarItem() {
+                    Type = SidebarItemType.Item,
+                    Title = "墨迹转形状",
+                    Name = "InkRecognitionItem",
+                    IconSource = GetIconResource("InkRecognitionIcon"),
+                    Selected = false,
+                });
+                SidebarItems.Add(new SidebarItem() {
+                    Type = SidebarItemType.Item,
+                    Title = "几何与形状绘制",
+                    Name = "ShapeDrawingItem",
+                    IconSource = GetIconResource("ShapeDrawingIcon"),
+                    Selected = false,
+                });
+                SidebarItems.Add(new SidebarItem() {
+                    Type = SidebarItemType.Item,
+                    Title = "自动化行为",
+                    Name = "AutomationItem",
+                    IconSource = GetIconResource("AutomationIcon"),
+                    Selected = false,
+                });
+                SidebarItems.Add(new SidebarItem() {
+                    Type = SidebarItemType.Separator
+                });
+                SidebarItems.Add(new SidebarItem() {
+                    Type = SidebarItemType.Item,
+                    Title = "PowerPoint 支持",
+                    Name = "PowerPointItem",
+                    IconSource = GetIconResource("PowerPointIcon"),
+                    Selected = false,
+                });
+                SidebarItems.Add(new SidebarItem() {
+                    Type = SidebarItemType.Item,
+                    Title = "插件和脚本",
+                    Name = "ExtensionsItem",
+                    IconSource = GetIconResource("ExtensionsIcon"),
+                    Selected = false,
+                });
+                SidebarItems.Add(new SidebarItem() {
+                    Type = SidebarItemType.Separator
+                });
+                SidebarItems.Add(new SidebarItem() {
+                    Type = SidebarItemType.Item,
+                    Title = "存储空间",
+                    Name = "StorageItem",
+                    IconSource = GetIconResource("StorageIcon"),
+                    Selected = false,
+                });
+                SidebarItems.Add(new SidebarItem() {
+                    Type = SidebarItemType.Item,
+                    Title = "截图和屏幕捕捉",
+                    Name = "SnapshotItem",
+                    IconSource = GetIconResource("SnapshotIcon"),
+                    Selected = false,
+                });
+                SidebarItems.Add(new SidebarItem() {
+                    Type = SidebarItemType.Item,
+                    Title = "点名器设置",
+                    Name = "LuckyRandomItem",
+                    IconSource = GetIconResource("LuckyRandomIcon"),
+                    Selected = false,
+                });
+                SidebarItems.Add(new SidebarItem() {
+                    Type = SidebarItemType.Item,
+                    Title = "高级选项",
+                    Name = "AdvancedItem",
+                    IconSource = GetIconResource("AdvancedIcon"),
+                    Selected = false,
+                });
+                SidebarItems.Add(new SidebarItem() {
+                    Type = SidebarItemType.Item,
+                    Title = "关于 InkCanvasForClass",
+                    Name = "AboutItem",
+                    IconSource = GetIconResource("AboutIcon"),
+                    Selected = false,
+                });
+                _selectedSidebarItemName = "AboutItem";
+                UpdateSidebarItemsSelection();
 
-            SettingsPanes = new Grid[] {
-                AboutPane,
-                ExtensionsPane,
-                CanvasAndInkPane,
-                GesturesPane,
-                StartupPane,
-                AppearancePane,
-                InkRecognitionPane,
-                AutomationPane,
-                PowerPointPane
-            };
+                // 安全地初始化数组，检查每个元素是否为null
+                var settingsPanesList = new List<Grid>();
+                if (AboutPane != null) settingsPanesList.Add(AboutPane);
+                if (ExtensionsPane != null) settingsPanesList.Add(ExtensionsPane);
+                if (CanvasAndInkPane != null) settingsPanesList.Add(CanvasAndInkPane);
+                if (GesturesPane != null) settingsPanesList.Add(GesturesPane);
+                if (StartupPane != null) settingsPanesList.Add(StartupPane);
+                if (AppearancePane != null) settingsPanesList.Add(AppearancePane);
+                if (InkRecognitionPane != null) settingsPanesList.Add(InkRecognitionPane);
+                if (AutomationPane != null) settingsPanesList.Add(AutomationPane);
+                if (PowerPointPane != null) settingsPanesList.Add(PowerPointPane);
+                SettingsPanes = settingsPanesList.ToArray();
 
-            SettingsPaneScrollViewers = new ScrollViewer[] {
-                SettingsAboutPanel.AboutScrollViewerEx,
-                CanvasAndInkScrollViewerEx,
-                GesturesScrollViewerEx,
-                StartupScrollViewerEx,
-                (AppearancePane.Children[0] as AppearancePanel).BaseView.SettingsViewScrollViewer,
-                InkRecognitionScrollViewerEx,
-                AutomationScrollViewerEx,
-                PowerPointScrollViewerEx
-            };
+                var scrollViewersList = new List<ScrollViewer>();
+                if (SettingsAboutPanel?.AboutScrollViewerEx != null) 
+                    scrollViewersList.Add(SettingsAboutPanel.AboutScrollViewerEx);
+                if (CanvasAndInkScrollViewerEx != null) 
+                    scrollViewersList.Add(CanvasAndInkScrollViewerEx);
+                if (GesturesScrollViewerEx != null) 
+                    scrollViewersList.Add(GesturesScrollViewerEx);
+                if (StartupScrollViewerEx != null) 
+                    scrollViewersList.Add(StartupScrollViewerEx);
+                if (AppearancePane?.Children.Count > 0 && AppearancePane.Children[0] is AppearancePanel appearancePanel && 
+                    appearancePanel.BaseView?.SettingsViewScrollViewer != null)
+                    scrollViewersList.Add(appearancePanel.BaseView.SettingsViewScrollViewer);
+                if (InkRecognitionScrollViewerEx != null) 
+                    scrollViewersList.Add(InkRecognitionScrollViewerEx);
+                if (AutomationScrollViewerEx != null) 
+                    scrollViewersList.Add(AutomationScrollViewerEx);
+                if (PowerPointScrollViewerEx != null) 
+                    scrollViewersList.Add(PowerPointScrollViewerEx);
+                SettingsPaneScrollViewers = scrollViewersList.ToArray();
 
-            SettingsAboutPanel.IsTopBarNeedShadowEffect += (o, s) => DropShadowEffectTopBar.Opacity = 0.25;
-            SettingsAboutPanel.IsTopBarNeedNoShadowEffect += (o, s) => DropShadowEffectTopBar.Opacity = 0;
+                if (SettingsAboutPanel != null) {
+                    SettingsAboutPanel.IsTopBarNeedShadowEffect += (o, s) => {
+                        if (DropShadowEffectTopBar != null) DropShadowEffectTopBar.Opacity = 0.25;
+                    };
+                    SettingsAboutPanel.IsTopBarNeedNoShadowEffect += (o, s) => {
+                        if (DropShadowEffectTopBar != null) DropShadowEffectTopBar.Opacity = 0;
+                    };
+                }
+            }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error initializing SettingsWindow: {ex}", LogHelper.LogType.Error);
+                System.Windows.MessageBox.Show($"设置窗口初始化失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         public Grid[] SettingsPanes = new Grid[] { };
@@ -204,32 +238,56 @@ namespace Ink_Canvas.Windows {
         public ObservableCollection<SidebarItem> SidebarItems = new ObservableCollection<SidebarItem>();
 
         public void UpdateSidebarItemsSelection() {
-            foreach (var si in SidebarItems) {
-                si.Selected = si.Name == _selectedSidebarItemName;
-                if (si.Selected) SettingsWindowTitle.Text = si.Title;
-            }
-            CollectionViewSource.GetDefaultView(SidebarItems).Refresh();
+            try {
+                foreach (var si in SidebarItems) {
+                    si.Selected = si.Name == _selectedSidebarItemName;
+                    if (si.Selected && SettingsWindowTitle != null) {
+                        SettingsWindowTitle.Text = si.Title;
+                    }
+                }
+                
+                if (SidebarItems != null) {
+                    CollectionViewSource.GetDefaultView(SidebarItems).Refresh();
+                }
 
-            AboutPane.Visibility = _selectedSidebarItemName == "AboutItem" ? Visibility.Visible : Visibility.Collapsed;
-            ExtensionsPane.Visibility = _selectedSidebarItemName == "ExtensionsItem" ? Visibility.Visible : Visibility.Collapsed;
-            CanvasAndInkPane.Visibility = _selectedSidebarItemName == "CanvasAndInkItem" ? Visibility.Visible : Visibility.Collapsed;
-            GesturesPane.Visibility = _selectedSidebarItemName == "GesturesItem" ? Visibility.Visible : Visibility.Collapsed;
-            StartupPane.Visibility = _selectedSidebarItemName == "StartupItem" ? Visibility.Visible : Visibility.Collapsed;
-            AppearancePane.Visibility = _selectedSidebarItemName == "AppearanceItem" ? Visibility.Visible : Visibility.Collapsed;
-            InkRecognitionPane.Visibility = _selectedSidebarItemName == "InkRecognitionItem" ? Visibility.Visible : Visibility.Collapsed;
-            AutomationPane.Visibility = _selectedSidebarItemName == "AutomationItem" ? Visibility.Visible : Visibility.Collapsed;
-            PowerPointPane.Visibility = _selectedSidebarItemName == "PowerPointItem" ? Visibility.Visible : Visibility.Collapsed;
-            foreach (var sv in SettingsPaneScrollViewers) {
-                sv.ScrollToTop();
+                // 安全地设置面板可见性
+                if (AboutPane != null) AboutPane.Visibility = _selectedSidebarItemName == "AboutItem" ? Visibility.Visible : Visibility.Collapsed;
+                if (ExtensionsPane != null) ExtensionsPane.Visibility = _selectedSidebarItemName == "ExtensionsItem" ? Visibility.Visible : Visibility.Collapsed;
+                if (CanvasAndInkPane != null) CanvasAndInkPane.Visibility = _selectedSidebarItemName == "CanvasAndInkItem" ? Visibility.Visible : Visibility.Collapsed;
+                if (GesturesPane != null) GesturesPane.Visibility = _selectedSidebarItemName == "GesturesItem" ? Visibility.Visible : Visibility.Collapsed;
+                if (StartupPane != null) StartupPane.Visibility = _selectedSidebarItemName == "StartupItem" ? Visibility.Visible : Visibility.Collapsed;
+                if (AppearancePane != null) AppearancePane.Visibility = _selectedSidebarItemName == "AppearanceItem" ? Visibility.Visible : Visibility.Collapsed;
+                if (InkRecognitionPane != null) InkRecognitionPane.Visibility = _selectedSidebarItemName == "InkRecognitionItem" ? Visibility.Visible : Visibility.Collapsed;
+                if (AutomationPane != null) AutomationPane.Visibility = _selectedSidebarItemName == "AutomationItem" ? Visibility.Visible : Visibility.Collapsed;
+                if (PowerPointPane != null) PowerPointPane.Visibility = _selectedSidebarItemName == "PowerPointItem" ? Visibility.Visible : Visibility.Collapsed;
+                
+                // 安全地滚动所有 ScrollViewers
+                if (SettingsPaneScrollViewers != null) {
+                    foreach (var sv in SettingsPaneScrollViewers) {
+                        if (sv != null) {
+                            sv.ScrollToTop();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error in UpdateSidebarItemsSelection: {ex}", LogHelper.LogType.Error);
             }
         }
 
         private void ScrollViewerEx_ScrollChanged(object sender, ScrollChangedEventArgs e) {
-            var scrollViewer = (ScrollViewer)sender;
-            if (scrollViewer.VerticalOffset >= 10) {
-                DropShadowEffectTopBar.Opacity = 0.25;
-            } else {
-                DropShadowEffectTopBar.Opacity = 0;
+            try {
+                var scrollViewer = sender as ScrollViewer;
+                if (scrollViewer == null) return;
+                
+                if (scrollViewer.VerticalOffset >= 10) {
+                    if (DropShadowEffectTopBar != null) DropShadowEffectTopBar.Opacity = 0.25;
+                } else {
+                    if (DropShadowEffectTopBar != null) DropShadowEffectTopBar.Opacity = 0;
+                }
+            }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error in ScrollViewerEx_ScrollChanged: {ex}", LogHelper.LogType.Error);
             }
         }
 

@@ -1168,18 +1168,34 @@ namespace Ink_Canvas {
         }
 
         private void SymbolIconSettings_Click(object sender, RoutedEventArgs e) {
-            if (isOpeningOrHidingSettingsPane != false) return;
-            HideSubPanels();
-            isChangingUserStorageSelectionProgramically = true;
-            UpdateUserStorageSelection();
-            isChangingUserStorageSelectionProgramically = false;
-            HandleUserCustomStorageLocation();
-            InitStorageFoldersStructure(storageLocationItems[ComboBoxStoragePath.SelectedIndex].Path);
-            StartAnalyzeStorage();
-            CustomStorageLocationGroup.Visibility = ((StorageLocationItem)ComboBoxStoragePath.SelectedItem).SelectItem == "c-" ? Visibility.Visible : Visibility.Collapsed;
-            CustomStorageLocationCheckPanel.Visibility = ((StorageLocationItem)ComboBoxStoragePath.SelectedItem).SelectItem == "c-" ? Visibility.Visible : Visibility.Collapsed;
-            CustomStorageLocation.Text = Settings.Storage.UserStorageLocation;
-            BtnSettings_Click(null, null);
+            try {
+                if (isOpeningOrHidingSettingsPane != false) return;
+                HideSubPanels();
+                isChangingUserStorageSelectionProgramically = true;
+                UpdateUserStorageSelection();
+                isChangingUserStorageSelectionProgramically = false;
+                HandleUserCustomStorageLocation();
+                
+                // 安全地获取存储路径
+                if (ComboBoxStoragePath?.SelectedIndex >= 0 && storageLocationItems?.Count > ComboBoxStoragePath.SelectedIndex) {
+                    InitStorageFoldersStructure(storageLocationItems[ComboBoxStoragePath.SelectedIndex].Path);
+                }
+                
+                StartAnalyzeStorage();
+                
+                // 安全地设置可见性
+                if (ComboBoxStoragePath?.SelectedItem is StorageLocationItem selectedItem) {
+                    CustomStorageLocationGroup.Visibility = selectedItem.SelectItem == "c-" ? Visibility.Visible : Visibility.Collapsed;
+                    CustomStorageLocationCheckPanel.Visibility = selectedItem.SelectItem == "c-" ? Visibility.Visible : Visibility.Collapsed;
+                }
+                
+                CustomStorageLocation.Text = Settings.Storage.UserStorageLocation;
+                BtnSettings_Click(null, null);
+            }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error in SymbolIconSettings_Click: {ex}", LogHelper.LogType.Error);
+                ShowNewToast("设置功能初始化失败", MW_Toast.ToastType.Error, 3000);
+            }
         }
 
         private async void SymbolIconScreenshot_MouseUp(object sender, MouseButtonEventArgs e) {
@@ -1575,7 +1591,9 @@ namespace Ink_Canvas {
                 else
                     ((UIElement)((Button)sender).Content).Opacity = 0.25;
             }
-            catch { }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error updating button opacity: {ex}", LogHelper.LogType.Error);
+            }
         }
 
         #endregion Left Side Panel
@@ -1604,35 +1622,47 @@ namespace Ink_Canvas {
         private bool isOpeningOrHidingSettingsPane = false;
 
         private void BtnSettings_Click(object sender, RoutedEventArgs e) {
-            if (BorderSettings.Visibility == Visibility.Visible) {
-                HideSubPanels();
+            try {
+                if (BorderSettings.Visibility == Visibility.Visible) {
+                    HideSubPanels();
+                }
+                else {
+                    SettingsOverlay.IsHitTestVisible = true;
+                    SettingsOverlay.Background = new SolidColorBrush(Color.FromArgb(1, 0, 0, 0));
+                    
+                    // 安全地滚动到顶部
+                    if (SettingsPanelScrollViewer != null) {
+                        SettingsPanelScrollViewer.ScrollToTop();
+                    }
+                    
+                    var sb = new Storyboard();
+
+                    // 滑动动画
+                    var slideAnimation = new DoubleAnimation {
+                        From = (BorderSettings.RenderTransform?.Value ?? new Matrix()).OffsetX - 490, // 滑动距离
+                        To = 0,
+                        Duration = TimeSpan.FromSeconds(0.6)
+                    };
+                    slideAnimation.EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut };
+                    Storyboard.SetTargetProperty(slideAnimation,
+                        new PropertyPath("(UIElement.RenderTransform).(TranslateTransform.X)"));
+                    Storyboard.SetDesiredFrameRate(slideAnimation , 144);
+
+                    sb.Children.Add(slideAnimation);
+
+                    sb.Completed += (s, _) => { isOpeningOrHidingSettingsPane = false; };
+
+                    BorderSettings.Visibility = Visibility.Visible;
+                    BorderSettings.RenderTransform = new TranslateTransform();
+
+                    isOpeningOrHidingSettingsPane = true;
+                    sb.Begin((FrameworkElement)BorderSettings);
+                }
             }
-            else {
-                SettingsOverlay.IsHitTestVisible = true;
-                SettingsOverlay.Background = new SolidColorBrush(Color.FromArgb(1, 0, 0, 0));
-                SettingsPanelScrollViewer.ScrollToTop();
-                var sb = new Storyboard();
-
-                // 滑动动画
-                var slideAnimation = new DoubleAnimation {
-                    From = BorderSettings.RenderTransform.Value.OffsetX - 490, // 滑动距离
-                    To = 0,
-                    Duration = TimeSpan.FromSeconds(0.6)
-                };
-                slideAnimation.EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut };
-                Storyboard.SetTargetProperty(slideAnimation,
-                    new PropertyPath("(UIElement.RenderTransform).(TranslateTransform.X)"));
-                Storyboard.SetDesiredFrameRate(slideAnimation , 144);
-
-                sb.Children.Add(slideAnimation);
-
-                sb.Completed += (s, _) => { isOpeningOrHidingSettingsPane = false; };
-
-                BorderSettings.Visibility = Visibility.Visible;
-                BorderSettings.RenderTransform = new TranslateTransform();
-
-                isOpeningOrHidingSettingsPane = true;
-                sb.Begin((FrameworkElement)BorderSettings);
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error in BtnSettings_Click: {ex}", LogHelper.LogType.Error);
+                isOpeningOrHidingSettingsPane = false;
+                ShowNewToast("设置面板打开失败", MW_Toast.ToastType.Error, 3000);
             }
         }
 

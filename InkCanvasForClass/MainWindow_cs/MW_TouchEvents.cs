@@ -130,7 +130,9 @@ namespace Ink_Canvas {
                         TouchDownPointsList.Clear();
                     }
                 }
-                catch { }
+                catch (Exception ex) {
+                    LogHelper.WriteLogToFile($"Error handling touch up event: {ex}", LogHelper.LogType.Error);
+                }
 
                 ViewboxFloatingBar.IsHitTestVisible = true;
                 BlackboardUIGridForInkReplay.IsHitTestVisible = true;
@@ -150,7 +152,9 @@ namespace Ink_Canvas {
                     try {
                         if (e.StylusDevice.StylusButtons[1].StylusButtonState == StylusButtonState.Down) return;
                     }
-                    catch { }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile($"Error checking stylus button state: {ex}", LogHelper.LogType.Error);
+                    }
 
                     var strokeVisual = GetStrokeVisual(e.StylusDevice.Id);
                     var stylusPointCollection = e.GetStylusPoints(this);
@@ -158,7 +162,9 @@ namespace Ink_Canvas {
                         strokeVisual.Add(new StylusPoint(stylusPoint.X, stylusPoint.Y, stylusPoint.PressureFactor));
                     strokeVisual.Redraw();
                 }
-                catch { }
+                catch (Exception ex) {
+                    LogHelper.WriteLogToFile($"Error handling stylus move event: {ex}", LogHelper.LogType.Error);
+                }
             }
         }
 
@@ -409,7 +415,9 @@ namespace Ink_Canvas {
                             stroke.DrawingAttributes.Width *= md.Scale.X;
                             stroke.DrawingAttributes.Height *= md.Scale.Y;
                         }
-                        catch { }
+                        catch (Exception ex) {
+                            LogHelper.WriteLogToFile($"Error scaling stroke drawing attributes: {ex}", LogHelper.LogType.Error);
+                        }
                     }
                 } else {
                     if (Settings.Gesture.IsEnableTwoFingerZoom) {
@@ -419,7 +427,9 @@ namespace Ink_Canvas {
                                 stroke.DrawingAttributes.Width *= md.Scale.X;
                                 stroke.DrawingAttributes.Height *= md.Scale.Y;
                             }
-                            catch { }
+                            catch (Exception ex) {
+                                LogHelper.WriteLogToFile($"Error scaling stroke drawing attributes: {ex}", LogHelper.LogType.Error);
+                            }
                         }
 
                         ;

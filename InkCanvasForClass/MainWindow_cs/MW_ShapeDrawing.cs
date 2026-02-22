@@ -457,7 +457,9 @@ namespace Ink_Canvas {
                     try {
                         inkCanvas.Strokes.Remove(lastTempStroke);
                     }
-                    catch { }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile($"Error removing temporary stroke: {ex}", LogHelper.LogType.Error);
+                    }
 
                     lastTempStroke = stroke;
                     inkCanvas.Strokes.Add(stroke);
@@ -509,7 +511,9 @@ namespace Ink_Canvas {
                     try {
                         inkCanvas.Strokes.Remove(lastTempStroke);
                     }
-                    catch { }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile($"Error removing temporary stroke: {ex}", LogHelper.LogType.Error);
+                    }
 
                     lastTempStroke = stroke;
                     inkCanvas.Strokes.Add(stroke);
@@ -682,7 +686,9 @@ namespace Ink_Canvas {
                     try {
                         inkCanvas.Strokes.Remove(lastTempStroke);
                     }
-                    catch { }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile($"Error removing temporary stroke: {ex}", LogHelper.LogType.Error);
+                    }
 
                     lastTempStroke = stroke;
                     inkCanvas.Strokes.Add(stroke);
@@ -705,7 +711,9 @@ namespace Ink_Canvas {
                     try {
                         inkCanvas.Strokes.Remove(lastTempStroke);
                     }
-                    catch { }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile($"Error removing temporary stroke: {ex}", LogHelper.LogType.Error);
+                    }
 
                     lastTempStroke = stroke;
                     inkCanvas.Strokes.Add(stroke);
@@ -720,7 +728,9 @@ namespace Ink_Canvas {
                     try {
                         inkCanvas.Strokes.Remove(lastTempStroke);
                     }
-                    catch { }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile($"Error removing temporary stroke: {ex}", LogHelper.LogType.Error);
+                    }
 
                     lastTempStroke = stroke;
                     inkCanvas.Strokes.Add(stroke);
@@ -737,7 +747,9 @@ namespace Ink_Canvas {
                     try {
                         inkCanvas.Strokes.Remove(lastTempStroke);
                     }
-                    catch { }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile($"Error removing temporary stroke: {ex}", LogHelper.LogType.Error);
+                    }
 
                     lastTempStroke = stroke;
                     inkCanvas.Strokes.Add(stroke);
@@ -755,7 +767,9 @@ namespace Ink_Canvas {
                     try {
                         inkCanvas.Strokes.Remove(lastTempStroke);
                     }
-                    catch { }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile($"Error removing temporary stroke: {ex}", LogHelper.LogType.Error);
+                    }
 
                     lastTempStroke = stroke;
                     inkCanvas.Strokes.Add(stroke);
@@ -809,7 +823,9 @@ namespace Ink_Canvas {
                     try {
                         inkCanvas.Strokes.Remove(lastTempStrokeCollection);
                     }
-                    catch { }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile($"Error removing temporary stroke collection: {ex}", LogHelper.LogType.Error);
+                    }
 
                     lastTempStrokeCollection = strokes;
                     inkCanvas.Strokes.Add(strokes);

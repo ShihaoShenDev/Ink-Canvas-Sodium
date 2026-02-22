@@ -1743,7 +1743,9 @@ namespace Ink_Canvas {
 
                 ToggleSwitchRunAtStartup.IsOn = true;
             }
-            catch { }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error resetting settings to recommendation: {ex}", LogHelper.LogType.Error);
+            }
 
             ShowNewToast("设置已重置为默认推荐设置~", MW_Toast.ToastType.Success, 2500);
         }
@@ -1759,7 +1761,9 @@ namespace Ink_Canvas {
                 LoadSettings();
                 isLoaded = true;
             }
-            catch { }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error in SpecialVersionResetToSuggestion_Click: {ex}", LogHelper.LogType.Error);
+            }
         }
 
         #endregion
@@ -2219,7 +2223,9 @@ namespace Ink_Canvas {
             try {
                 File.WriteAllText(App.RootPath + settingsFileName, text);
             }
-            catch { }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error saving settings to file: {ex}", LogHelper.LogType.Error);
+            }
         }
 
         private void SCManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e) {

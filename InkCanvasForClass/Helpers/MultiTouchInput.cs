@@ -85,7 +85,9 @@ namespace Ink_Canvas.Helpers
                     Stroke.Draw(dc);
                 }
             }
-            catch { }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error drawing stroke visual: {ex}", LogHelper.LogType.Error);
+            }
         }
 
         private readonly DrawingAttributes _drawingAttributes;

@@ -53,7 +53,9 @@ namespace Ink_Canvas {
                         string text = File.ReadAllText(App.RootPath + settingsFileName);
                         Settings = JsonConvert.DeserializeObject<Settings>(text);
                     }
-                    catch { }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile($"Error deserializing settings: {ex}", LogHelper.LogType.Error);
+                    }
                 } else {
                     BtnResetToSuggestion_Click(null, null);
                     DisplayWelcomePopup();
@@ -70,7 +72,9 @@ namespace Ink_Canvas {
                         CustomCopyrightBanner.Source =
                             new BitmapImage(new Uri($"file://{App.RootPath + "custom-copyright-banner.png"}"));
                     }
-                    catch { }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile($"Error loading custom copyright banner: {ex}", LogHelper.LogType.Error);
+                    }
                 } else {
                     CustomCopyrightBanner.Visibility = Visibility.Collapsed;
                 }

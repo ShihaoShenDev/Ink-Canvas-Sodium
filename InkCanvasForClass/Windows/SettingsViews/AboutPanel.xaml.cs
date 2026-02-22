@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using Ink_Canvas.Helpers;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -37,7 +38,9 @@ namespace Ink_Canvas.Windows.SettingsViews {
                     CopyrightBannerImage.Source =
                         new BitmapImage(new Uri($"file://{App.RootPath + "icc-about-illustrations.png"}"));
                 }
-                catch { }
+                catch (Exception ex) {
+                    LogHelper.WriteLogToFile($"Error loading about page banner image: {ex}", LogHelper.LogType.Error);
+                }
             } else {
                 CopyrightBannerImage.Visibility = Visibility.Collapsed;
             }

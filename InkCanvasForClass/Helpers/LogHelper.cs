@@ -43,7 +43,10 @@ namespace Ink_Canvas.Helpers
                 sw.WriteLine(string.Format("{0} [{1}] {2}", DateTime.Now.ToString("O"), strLogType, str));
                 sw.Close();
             }
-            catch { }
+            catch (Exception ex) {
+                // Last resort: try to log to console if file logging fails
+                Console.WriteLine($"Failed to write log: {ex.Message}");
+            }
         }
 
         public enum LogType

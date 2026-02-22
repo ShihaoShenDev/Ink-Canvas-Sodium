@@ -250,7 +250,9 @@ namespace Ink_Canvas {
                 pptApplication.SlideShowBegin -= PptApplication_SlideShowBegin;
                 pptApplication.SlideShowNextSlide -= PptApplication_SlideShowNextSlide;
                 pptApplication.SlideShowEnd -= PptApplication_SlideShowEnd;
-            } catch { }
+            } catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error removing PowerPoint event handlers: {ex}", LogHelper.LogType.Error);
+            }
             pptApplication = null;
             timerCheckPPT.Start();
             Application.Current.Dispatcher.Invoke(() => {
@@ -565,7 +567,10 @@ namespace Ink_Canvas {
                 try {
                     File.WriteAllText(folderPath + "/Position", previousSlideID.ToString());
                 }
-                catch { }
+                catch (Exception ex) {
+                    LogHelper.WriteLogToFile($"Error saving PPT position to file: {ex}", LogHelper.LogType.Error);
+                    // Continue execution - position saving is not critical
+                }
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     try
@@ -575,7 +580,9 @@ namespace Ink_Canvas {
                         ms.Position = 0;
                         memoryStreams[currentShowPosition] = ms;
                     }
-                    catch { }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile($"Error saving strokes to memory stream: {ex}", LogHelper.LogType.Error);
+                    }
                 });
 
                 for (var i = 1; i <= Pres.Slides.Count; i++)
@@ -692,16 +699,18 @@ namespace Ink_Canvas {
                     try {
                         pptApplication.SlideShowWindows[1].Activate();
                     }
-                    catch {
-                        // ignored
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile($"Error activating PowerPoint slide show window: {ex}", LogHelper.LogType.Error);
+                        // Continue execution - activation failure is not critical
                     }
 
                     try {
                         pptApplication.SlideShowWindows[1].View.Previous();
                     }
-                    catch {
-                        // ignored
-                    } // Without this catch{}, app will crash when click the pre-page button in the fir page in some special env.
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile($"Error navigating to previous slide: {ex}", LogHelper.LogType.Error);
+                        // Continue execution - navigation failure is not critical
+                    }
                 })).Start();
             }
             catch {
@@ -731,19 +740,22 @@ namespace Ink_Canvas {
                     try {
                         pptApplication.SlideShowWindows[1].Activate();
                     }
-                    catch {
-                        // ignored
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile($"Error activating PowerPoint slide show window: {ex}", LogHelper.LogType.Error);
+                        // Continue execution - activation failure is not critical
                     }
 
                     try {
                         pptApplication.SlideShowWindows[1].View.Next();
                     }
-                    catch {
-                        // ignored
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile($"Error navigating to next slide: {ex}", LogHelper.LogType.Error);
+                        // Continue execution - navigation failure is not critical
                     }
                 })).Start();
             }
-            catch {
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error starting PPT navigation thread: {ex}", LogHelper.LogType.Error);
                 BorderFloatingBarExitPPTBtn.Visibility = Visibility.Collapsed;
                 LeftBottomPanelForPPTNavigation.Visibility = Visibility.Collapsed;
                 RightBottomPanelForPPTNavigation.Visibility = Visibility.Collapsed;
@@ -823,7 +835,10 @@ namespace Ink_Canvas {
             try {
                 pptApplication.SlideShowWindows[1].SlideNavigation.Visible = true;
             }
-            catch { }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error showing slide navigation: {ex}", LogHelper.LogType.Error);
+                // Continue execution - navigation visibility is not critical
+            }
 
             // 控制居中
             if (!isFloatingBarFolded) {
@@ -837,7 +852,10 @@ namespace Ink_Canvas {
                 try {
                     presentation.SlideShowSettings.Run();
                 }
-                catch { }
+                catch (Exception ex) {
+                    LogHelper.WriteLogToFile($"Error starting PowerPoint slide show: {ex}", LogHelper.LogType.Error);
+                    // Continue execution - slide show start failure is not critical
+                }
             })).Start();
         }
 

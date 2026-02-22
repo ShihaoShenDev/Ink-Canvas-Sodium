@@ -41,8 +41,39 @@ namespace Ink_Canvas {
 
         private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            Ink_Canvas.MainWindow.ShowNewMessage("抱歉，出现未预期的异常，可能导致 InkCanvasForClass 运行不稳定。\n建议保存墨迹后重启应用。");
-            LogHelper.NewLog(e.Exception.ToString());
+            try {
+                // 记录详细的异常信息
+                var exceptionDetails = $"未处理的异常:\n" +
+                                     $"异常类型: {e.Exception.GetType().Name}\n" +
+                                     $"异常消息: {e.Exception.Message}\n" +
+                                     $"堆栈跟踪: {e.Exception.StackTrace}\n" +
+                                     $"发生时间: {DateTime.Now:yyyy-MM-dd HH:mm:ss}";
+                
+                LogHelper.NewLog(exceptionDetails);
+                
+                // 检查是否是设置相关的异常
+                if (e.Exception.StackTrace?.Contains("Settings") == true || 
+                    e.Exception.Message?.Contains("设置") == true ||
+                    e.Exception.Source?.Contains("SettingsWindow") == true) {
+                    
+                    // 对于设置相关的异常，显示更友好的消息
+                    Ink_Canvas.MainWindow.ShowNewMessage("设置功能出现异常，正在尝试恢复。\n如果问题持续，请重启应用程序。");
+                }
+                else {
+                    // 其他异常显示通用消息
+                    Ink_Canvas.MainWindow.ShowNewMessage("抱歉，出现未预期的异常，可能导致 InkCanvasForClass 运行不稳定。\n建议保存墨迹后重启应用。");
+                }
+            }
+            catch (Exception logEx) {
+                // 如果连异常处理都失败了，至少尝试记录到文件
+                try {
+                    File.WriteAllText("critical_error.log", $"严重错误: {DateTime.Now}\n主异常: {e.Exception}\n日志异常: {logEx}");
+                }
+                catch {
+                    // 最后的保护，什么都不做
+                }
+            }
+            
             e.Handled = true;
         }
 
@@ -108,7 +139,9 @@ namespace Ink_Canvas {
                         var obj = JObject.Parse(text);
                         isUsingWindowChrome = (bool)obj.SelectToken("startup.enableWindowChromeRendering");
                     }
-                    catch { }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile($"Error parsing Settings.json: {ex}", LogHelper.LogType.Error);
+                    }
                 }
             } catch (Exception ex) {
                 LogHelper.WriteLogToFile(ex.ToString(), LogHelper.LogType.Error);
@@ -138,9 +171,13 @@ namespace Ink_Canvas {
                         SenderScrollViewer.ScrollToVerticalOffset(SenderScrollViewer.VerticalOffset - e.Delta * 10 * System.Windows.Forms.SystemInformation.MouseWheelScrollLines / (double)120);
                         e.Handled = true;
                     }
-                    catch {  }
+                    catch (Exception ex) {
+                        LogHelper.WriteLogToFile($"Error handling scroll wheel in inner try: {ex}", LogHelper.LogType.Error);
+                    }
             }
-            catch {  }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error handling scroll wheel in outer try: {ex}", LogHelper.LogType.Error);
+            }
         }
     }
 }

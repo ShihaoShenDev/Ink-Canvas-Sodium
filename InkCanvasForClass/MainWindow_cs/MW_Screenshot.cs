@@ -681,10 +681,15 @@ namespace Ink_Canvas {
                     .Replace("[height]", bitmap.Height.ToString());
                 var finalPath = (fullPath.EndsWith("\\") ? fullPath.Substring(0, fullPath.Length - 1) : fullPath) +
                                 $"\\{fileName}";
-                bitmap.Save(finalPath, config.OutputMIMEType == OutputImageMIMEFormat.Png ? ImageFormat.Png :
-                    config.OutputMIMEType == OutputImageMIMEFormat.Bmp ? ImageFormat.Bmp : ImageFormat.Jpeg);
+                try {
+                    bitmap.Save(finalPath, config.OutputMIMEType == OutputImageMIMEFormat.Png ? ImageFormat.Png :
+                        config.OutputMIMEType == OutputImageMIMEFormat.Bmp ? ImageFormat.Bmp : ImageFormat.Jpeg);
+                }
+                catch (Exception saveEx) {
+                    LogHelper.WriteLogToFile($"Error saving screenshot to file: {saveEx}", LogHelper.LogType.Error);
+                    throw new Exception($"截图保存失败: {saveEx.Message}");
+                }
             }
-            bitmap.Dispose();
 
             return bitmap;
         }
@@ -700,11 +705,18 @@ namespace Ink_Canvas {
             }
 
             savePath += @"\" + fileName + ".png";
-            if (!Directory.Exists(Path.GetDirectoryName(savePath))) {
-                Directory.CreateDirectory(Path.GetDirectoryName(savePath));
-            }
+            try {
+                if (!Directory.Exists(Path.GetDirectoryName(savePath))) {
+                    Directory.CreateDirectory(Path.GetDirectoryName(savePath));
+                }
 
-            bitmap.Save(savePath, ImageFormat.Png);
+                bitmap.Save(savePath, ImageFormat.Png);
+            }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error saving screenshot to file: {ex}", LogHelper.LogType.Error);
+                ShowNewToast("截图保存失败: " + ex.Message, MW_Toast.ToastType.Error, 5000);
+                return;
+            }
             if (Settings.Automation.IsAutoSaveStrokesAtScreenshot) {
                 SaveInkCanvasStrokes(false, false);
             }
@@ -732,11 +744,18 @@ namespace Ink_Canvas {
 
             if (fileName == null) fileName = DateTime.Now.ToString("u").Replace(":", "-");
             savePath += @"\" + fileName + ".png";
-            if (!Directory.Exists(Path.GetDirectoryName(savePath))) {
-                Directory.CreateDirectory(Path.GetDirectoryName(savePath));
-            }
+            try {
+                if (!Directory.Exists(Path.GetDirectoryName(savePath))) {
+                    Directory.CreateDirectory(Path.GetDirectoryName(savePath));
+                }
 
-            bitmap.Save(savePath, ImageFormat.Png);
+                bitmap.Save(savePath, ImageFormat.Png);
+            }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error saving screenshot to file: {ex}", LogHelper.LogType.Error);
+                ShowNewToast("截图保存失败: " + ex.Message, MW_Toast.ToastType.Error, 5000);
+                return;
+            }
             if (Settings.Automation.IsAutoSaveStrokesAtScreenshot) {
                 SaveInkCanvasStrokes(false, false);
             }

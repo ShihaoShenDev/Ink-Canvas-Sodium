@@ -184,7 +184,9 @@ namespace Ink_Canvas {
                     //}
                 }
             }
-            catch {}
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error in TimerKillProcess_Elapsed: {ex}", LogHelper.LogType.Error);
+            }
         }
 
 
@@ -300,7 +302,9 @@ namespace Ink_Canvas {
                     unfoldFloatingBarByUser = false;
                 }
             }
-            catch { }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error in timerCheckAutoFold_Elapsed: {ex}", LogHelper.LogType.Error);
+            }
         }
 
         private void timerCheckAutoUpdateWithSilence_Elapsed(object sender, ElapsedEventArgs e) {

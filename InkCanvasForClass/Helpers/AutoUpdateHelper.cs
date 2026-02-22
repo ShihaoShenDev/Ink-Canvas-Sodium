@@ -200,7 +200,9 @@ namespace Ink_Canvas.Helpers
                     int exitCode = process.ExitCode;*/
                 }
             }
-            catch { }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error restarting application for update: {ex}", LogHelper.LogType.Error);
+            }
         }
 
         public static void DeleteUpdatesFolder()

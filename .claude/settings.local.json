@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(openspec list:*)",
+      "Bash(mkdir:*)",
+      "Bash(openspec validate fix-empty-catch-blocks:*)",
+      "Bash(openspec show fix-empty-catch-blocks:*)",
+      "Bash(cat:*)",
+      "Bash(python3:*)",
+      "Bash(openspec archive fix-empty-catch-blocks:*)",
+      "Bash(openspec show:*)",
+      "Bash(openspec validate:*)"
+    ]
+  }
+}

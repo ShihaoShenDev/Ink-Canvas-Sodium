@@ -348,7 +348,9 @@ namespace Ink_Canvas {
                                 }
                             }
                         }
-                        catch { }
+                        catch (Exception ex) {
+                            LogHelper.WriteLogToFile($"Error in InkToShapeProcess stroke removal: {ex}", LogHelper.LogType.Error);
+                        }
                     }
 
                     var _t = new Thread(InkToShapeProcess);
@@ -374,7 +376,9 @@ namespace Ink_Canvas {
                         RandWindow.randSeed = (int)(_speed * 100000 * 1000);
                     }
                 }
-                catch { }
+                catch (Exception ex) {
+                    LogHelper.WriteLogToFile($"Error calculating random seed: {ex}", LogHelper.LogType.Error);
+                }
 
                 switch (Settings.Canvas.InkStyle) {
                     case 1:
@@ -404,7 +408,9 @@ namespace Ink_Canvas {
 
                                 e.Stroke.StylusPoints = stylusPoints;
                             }
-                            catch { }
+                            catch (Exception ex) {
+                                LogHelper.WriteLogToFile($"Error simulating pressure for InkStyle 1: {ex}", LogHelper.LogType.Error);
+                            }
 
                         break;
                     case 0:
@@ -447,12 +453,16 @@ namespace Ink_Canvas {
 
                                 e.Stroke.StylusPoints = stylusPoints;
                             }
-                            catch { }
+                            catch (Exception ex) {
+                                LogHelper.WriteLogToFile($"Error simulating pressure for InkStyle 0: {ex}", LogHelper.LogType.Error);
+                            }
 
                         break;
                 }
             }
-            catch { }
+            catch (Exception ex) {
+                LogHelper.WriteLogToFile($"Error in InkToShapeProcess: {ex}", LogHelper.LogType.Error);
+            }
 
             if (Settings.Canvas.FitToCurve == true) drawingAttributes.FitToCurve = true;
         }
