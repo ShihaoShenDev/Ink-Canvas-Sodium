@@ -801,6 +801,9 @@ namespace Ink_Canvas {
             GridTransparencyFakeBackground.Opacity = 0;
             GridTransparencyFakeBackground.Background = Brushes.Transparent;
 
+            // 启用智能鼠标穿透
+            // SetSmartHitTestThrough(true);
+
             GridBackgroundCoverHolder.Visibility = Visibility.Collapsed;
             inkCanvas.Select(new StrokeCollection());
             GridInkCanvasSelectionCover.Visibility = Visibility.Collapsed;
@@ -855,6 +858,9 @@ namespace Ink_Canvas {
 
                 GridTransparencyFakeBackground.Opacity = 1;
                 GridTransparencyFakeBackground.Background = new SolidColorBrush(StringToColor("#01FFFFFF"));
+
+                // 禁用智能鼠标穿透
+                // SetSmartHitTestThrough(false);
 
                 inkCanvas.IsHitTestVisible = true;
                 inkCanvas.Visibility = Visibility.Visible;

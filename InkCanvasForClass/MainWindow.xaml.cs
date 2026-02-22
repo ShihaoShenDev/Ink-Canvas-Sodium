@@ -18,11 +18,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Win32;
 using System.Text;
+using System.Windows.Input;
 using System.Windows.Documents;
 using Ink_Canvas.Popups;
 using iNKORE.UI.WPF.Modern.Controls;
 using System.Windows.Forms;
-using System.Windows.Input;
 using Ink_Canvas.Resources.ICCConfiguration;
 using Vanara.PInvoke;
 using Application = System.Windows.Application;
@@ -184,6 +184,10 @@ namespace Ink_Canvas {
         public static ICCConfiguration SettingsV2 = new ICCConfiguration();
         public static string settingsFileName = "Settings.json";
         public bool isLoaded = false;
+        
+        // 智能鼠标穿透相关
+        private bool isSmartHitTestThrough = false;
+        private HwndSource hwndSource;
 
         [DllImport("user32.dll")]
         static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
@@ -193,6 +197,22 @@ namespace Ink_Canvas {
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, UInt32 uFlags);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr WindowFromPoint(POINT Point);
+
+        [DllImport("user32.dll")]
+        static extern bool GetCursorPos(out POINT lpPoint);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            public int X;
+            public int Y;
+        }
+
+        private const uint WS_EX_TRANSPARENT = 0x00000020;
+        private const int GWL_EXSTYLE_SMART = -20;
 
         const uint MF_BYCOMMAND = 0x00000000;
         const uint MF_GRAYED = 0x00000001;
@@ -275,6 +295,9 @@ namespace Ink_Canvas {
             });
 
             UpdateIndexInfoDisplay();
+
+            // 暂时禁用智能鼠标穿透
+            // InitSmartHitTestThrough();
 
             SetWindowPos(new WindowInteropHelper(this).Handle, new IntPtr(-1), 0, 0, 0, 0, 0x0002|0x0040|0x0001);
         }
@@ -381,5 +404,109 @@ namespace Ink_Canvas {
         }
 
         #endregion Definations and Loading
+
+        #region 智能鼠标穿透
+
+        private void InitSmartHitTestThrough()
+        {
+            hwndSource = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
+            if (hwndSource != null)
+            {
+                hwndSource.AddHook(new HwndSourceHook(SmartHitTestWndProc));
+            }
+        }
+
+        private IntPtr SmartHitTestWndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg == 0x0200) // WM_MOUSEMOVE
+            {
+                if (isSmartHitTestThrough)
+                {
+                    // 获取鼠标位置
+                    POINT cursorPos;
+                    if (!GetCursorPos(out cursorPos))
+                    {
+                        // Handle error
+                    }
+                    
+                    // 转换为客户端坐标
+                    var clientPos = PointFromScreen(new System.Windows.Point(cursorPos.X, cursorPos.Y));
+                    
+                    // 检查鼠标是否在工具栏区域
+                    if (IsPointInFloatingBar(clientPos) || IsPointInOtherUIElements(clientPos))
+                    {
+                        // 在工具栏区域，暂时禁用穿透
+                        var currentStyle = GetWindowLongPtrSmart(hwnd, GWL_EXSTYLE_SMART);
+                        SetWindowLongPtrSmart(hwnd, GWL_EXSTYLE_SMART, new IntPtr(currentStyle.ToInt64() & ~WS_EX_TRANSPARENT));
+                    }
+                    else
+                    {
+                        // 在画布区域，启用穿透
+                        var currentStyle = GetWindowLongPtrSmart(hwnd, GWL_EXSTYLE_SMART);
+                        SetWindowLongPtrSmart(hwnd, GWL_EXSTYLE_SMART, new IntPtr(currentStyle.ToInt64() | WS_EX_TRANSPARENT));
+                    }
+                }
+            }
+            
+            return IntPtr.Zero;
+        }
+
+        private bool IsPointInFloatingBar(System.Windows.Point point)
+        {
+            if (ViewboxFloatingBar.Visibility != Visibility.Visible)
+                return false;
+                
+            var bounds = new Rect(
+                ViewboxFloatingBar.PointToScreen(new System.Windows.Point(0, 0)),
+                ViewboxFloatingBar.PointToScreen(new System.Windows.Point(ViewboxFloatingBar.ActualWidth, ViewboxFloatingBar.ActualHeight)));
+            
+            return bounds.Contains(PointToScreen(point));
+        }
+
+        private bool IsPointInOtherUIElements(System.Windows.Point point)
+        {
+            // 检查其他需要保持可点击的UI元素
+            // 例如：设置面板、画笔面板等
+            
+            if (BorderSettings.Visibility == Visibility.Visible)
+            {
+                var settingsBounds = new Rect(
+                    BorderSettings.PointToScreen(new System.Windows.Point(0, 0)),
+                    BorderSettings.PointToScreen(new System.Windows.Point(BorderSettings.ActualWidth, BorderSettings.ActualHeight)));
+                if (settingsBounds.Contains(PointToScreen(point)))
+                    return true;
+            }
+            
+            if (StackPanelCanvasControls.Visibility == Visibility.Visible)
+            {
+                var canvasControlsBounds = new Rect(
+                    StackPanelCanvasControls.PointToScreen(new System.Windows.Point(0, 0)),
+                    StackPanelCanvasControls.PointToScreen(new System.Windows.Point(StackPanelCanvasControls.ActualWidth, StackPanelCanvasControls.ActualHeight)));
+                if (canvasControlsBounds.Contains(PointToScreen(point)))
+                    return true;
+            }
+            
+            return false;
+        }
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetWindowLongPtrSmart(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SetWindowLongPtrSmart(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+        public void SetSmartHitTestThrough(bool enabled)
+        {
+            isSmartHitTestThrough = enabled;
+            if (!enabled)
+            {
+                // 禁用智能穿透，移除WS_EX_TRANSPARENT样式
+                var hwnd = new WindowInteropHelper(this).Handle;
+                var currentStyle = GetWindowLongPtrSmart(hwnd, GWL_EXSTYLE_SMART);
+                SetWindowLongPtrSmart(hwnd, GWL_EXSTYLE_SMART, new IntPtr(currentStyle.ToInt64() & ~WS_EX_TRANSPARENT));
+            }
+        }
+
+        #endregion
     }
 }
