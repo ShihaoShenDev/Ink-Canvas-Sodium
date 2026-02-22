@@ -4,7 +4,7 @@
 		<OutputType>WinExe</OutputType>
 		<RootNamespace>Ink_Canvas</RootNamespace>
 		<AssemblyName>InkCanvasForClass</AssemblyName>
-		<TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+		<TargetFramework>net11.0-windows10.0.26100.0</TargetFramework>
 		<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
 		<UseWPF>true</UseWPF>
 		<Configurations>Debug;Release;x86 Debug</Configurations>
