@@ -58,7 +58,7 @@ namespace Ink_Canvas {
                     }
                 } else {
                     BtnResetToSuggestion_Click(null, null);
-                    DisplayWelcomePopup();
+                    // DisplayWelcomePopup(); // 已删除启动弹窗
                 }
             }
             catch (Exception ex) {

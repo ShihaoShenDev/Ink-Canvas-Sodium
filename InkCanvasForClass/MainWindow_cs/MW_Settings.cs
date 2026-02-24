@@ -1710,7 +1710,7 @@ namespace Ink_Canvas {
             Settings.Startup.AutoUpdateWithSilenceStartTime = "18:20";
             Settings.Startup.AutoUpdateWithSilenceEndTime = "07:40";
             Settings.Startup.IsFoldAtStartup = false;
-            Settings.Startup.EnableWindowChromeRendering = false;
+            // Settings.Startup.EnableWindowChromeRendering = false;
 
             Settings.Snapshot.CopyScreenshotToClipboard = true;
             Settings.Snapshot.AttachInkWhenScreenshot = true;
