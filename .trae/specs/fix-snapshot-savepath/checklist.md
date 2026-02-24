@@ -1,5 +1,0 @@
-- [x] FullscreenSnapshot 在 BitmapSavePath 为 null 时不崩溃且能保存到桌面
-- [x] OutputMIMEType 与最终保存文件扩展名一致（PNG/BMP/JPEG）
-- [x] SaveBitmapFileName 为空/空白时仍可保存且文件名符合默认模板
-- [x] 复制到剪贴板功能不受影响
-- [x] 解决方案可成功构建，无新增诊断错误
