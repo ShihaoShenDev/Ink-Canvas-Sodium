@@ -474,32 +474,48 @@ namespace Ink_Canvas {
                         if (w == 0 || h == 0) return true;
 
                         // 使用PrintWindow（RENDER_FULL_CONTENT）來實現窗體圖片截取（支持D3D和DX）
-                        Bitmap bmp = new Bitmap(rect.Width, rect.Height);
-                        Graphics memoryGraphics = Graphics.FromImage(bmp);
-                        IntPtr hdc = memoryGraphics.GetHdc();
-                        PrintWindow(hwnd, hdc, 2);
+                        Bitmap bmp = null;
+                        Graphics memoryGraphics = null;
+                        try
+                        {
+                            bmp = new Bitmap(rect.Width, rect.Height);
+                            memoryGraphics = Graphics.FromImage(bmp);
+                            IntPtr hdc = memoryGraphics.GetHdc();
+                            try
+                            {
+                                PrintWindow(hwnd, hdc, 2);
+                            }
+                            finally
+                            {
+                                memoryGraphics.ReleaseHdc(hdc);
+                            }
 
-                        // 添加窗體信息
-                        windows.Add(new WindowInformation() {
-                            AppIcon = icon,
-                            Title = title.ToString(),
-                            IsVisible = isvisible,
-                            WindowBitmap = bmp,
-                            Width = w,
-                            Height = h,
-                            Rect = rect,
-                            Placement = placement,
-                            RealRect = realRect,
-                            Handle = hwnd,
-                            ContentRect = new Rectangle(realRect.X - rect.X, realRect.Y - rect.Y, (int)Math.Round(
-                                realRect.Width / scale ,0), (int)Math.Round(realRect.Height / scale, 0)),
-                            WindowDPI = dpiForHwnd,
-                            SystemDPI = dpi,
-                            DPIScale = scale
-                        });
-
-                        // 釋放HDC
-                        memoryGraphics.ReleaseHdc(hdc);
+                            // 添加窗體信息
+                            windows.Add(new WindowInformation() {
+                                AppIcon = icon,
+                                Title = title.ToString(),
+                                IsVisible = isvisible,
+                                WindowBitmap = bmp,
+                                Width = w,
+                                Height = h,
+                                Rect = rect,
+                                Placement = placement,
+                                RealRect = realRect,
+                                Handle = hwnd,
+                                ContentRect = new Rectangle(realRect.X - rect.X, realRect.Y - rect.Y, (int)Math.Round(
+                                    realRect.Width / scale ,0), (int)Math.Round(realRect.Height / scale, 0)),
+                                WindowDPI = dpiForHwnd,
+                                SystemDPI = dpi,
+                                DPIScale = scale
+                            });
+                        }
+                        catch
+                        {
+                            // 如果创建Bitmap或Graphics失败，确保释放资源
+                            bmp?.Dispose();
+                            memoryGraphics?.Dispose();
+                            throw;
+                        }
 
                         // 嘗試調用GC回收叻色
                         System.GC.Collect();
@@ -703,7 +719,7 @@ namespace Ink_Canvas {
                 }
                 catch (Exception saveEx) {
                     LogHelper.NewLog(saveEx);
-                    throw new Exception($"截图保存失败: {saveEx.Message}");
+                    throw new Exception($"截图保存遇到问题: {saveEx.Message}");
                 }
             }
 
@@ -752,7 +768,7 @@ namespace Ink_Canvas {
                 if (Settings.Automation.IsAutoSaveStrokesAtScreenshot) SaveInkCanvasStrokes(false, false);
             } catch (Exception ex) {
                 LogHelper.NewLog(ex);
-                ShowNewToast("截图保存失败: " + ex.Message, MW_Toast.ToastType.Error, 5000);
+                ShowNewToast("截图保存遇到问题: " + ex.Message, MW_Toast.ToastType.Error, 5000);
             }
         }
 
@@ -774,7 +790,7 @@ namespace Ink_Canvas {
             }
             catch (Exception ex) {
                 LogHelper.WriteLogToFile($"Error saving screenshot to file: {ex}", LogHelper.LogType.Error);
-                ShowNewToast("截图保存失败: " + ex.Message, MW_Toast.ToastType.Error, 5000);
+                ShowNewToast("截图保存遇到问题: " + ex.Message, MW_Toast.ToastType.Error, 5000);
                 return;
             }
             if (Settings.Automation.IsAutoSaveStrokesAtScreenshot) {

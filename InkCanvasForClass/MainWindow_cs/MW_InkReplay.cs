@@ -47,7 +47,7 @@ namespace Ink_Canvas {
             var strokes = inkCanvas.Strokes.Clone();
             if (inkCanvas.GetSelectedStrokes().Count != 0) strokes = inkCanvas.GetSelectedStrokes().Clone();
             int k = 1, i = 0;
-            new Thread(() => {
+            Task.Run(async () => {
                 isRestartInkReplay = true;
                 while (isRestartInkReplay) {
                     isRestartInkReplay = false;
@@ -67,12 +67,12 @@ namespace Ink_Canvas {
                                 if (isRestartInkReplay) break;
 
                                 while (isPauseInkReplay) {
-                                    Thread.Sleep(10);
+                                    await Task.Delay(10);
                                 }
 
                                 if (i++ >= 50) {
                                     i = 0;
-                                    Thread.Sleep((int)(10 / inkReplaySpeed));
+                                    await Task.Delay((int)(10 / inkReplaySpeed));
                                     if (isStopInkReplay) return;
                                 }
 
@@ -97,12 +97,12 @@ namespace Ink_Canvas {
                                 if (isRestartInkReplay) break;
 
                                 while (isPauseInkReplay) {
-                                    Thread.Sleep(10);
+                                    await Task.Delay(10);
                                 }
 
                                 if (i++ >= k) {
                                     i = 0;
-                                    Thread.Sleep((int)(10 / inkReplaySpeed));
+                                    await Task.Delay((int)(10 / inkReplaySpeed));
                                     if (isStopInkReplay) return;
                                 }
 
@@ -124,7 +124,7 @@ namespace Ink_Canvas {
                     }
                 }
 
-                Thread.Sleep(100);
+                await Task.Delay(100);
                 Application.Current.Dispatcher.Invoke(() => {
                     InkCanvasForInkReplay.Visibility = Visibility.Collapsed;
                     InkCanvasGridForInkReplay.Visibility = Visibility.Visible;
@@ -135,7 +135,7 @@ namespace Ink_Canvas {
                     BlackboardUIGridForInkReplay.Visibility = Visibility.Visible;
                     BlackboardUIGridForInkReplay.IsHitTestVisible = true;
                 });
-            }).Start();
+            });
         }
 
         #region 墨迹回放（旧版，等待重构）

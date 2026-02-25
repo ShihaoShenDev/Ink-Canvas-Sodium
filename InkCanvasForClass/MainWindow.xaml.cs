@@ -184,7 +184,7 @@ namespace Ink_Canvas {
         public static ICCConfiguration SettingsV2 = new ICCConfiguration();
         public static string settingsFileName = "Settings.json";
         public bool isLoaded = false;
-        
+
         // 智能鼠标穿透相关
         private bool isSmartHitTestThrough = false;
         private HwndSource hwndSource;
@@ -235,71 +235,79 @@ namespace Ink_Canvas {
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e) {
-            loadPenCanvas();
-            //加载设置
-            LoadSettings(true);
-            // HasNewUpdateWindow hasNewUpdateWindow = new HasNewUpdateWindow();
-            if (Environment.Is64BitProcess) SettingsInkRecognitionGroupBox.Visibility = Visibility.Collapsed;
+            try
+            {
+                loadPenCanvas();
+                //加载设置
+                LoadSettings(true);
+                // HasNewUpdateWindow hasNewUpdateWindow = new HasNewUpdateWindow();
+                if (Environment.Is64BitProcess) SettingsInkRecognitionGroupBox.Visibility = Visibility.Collapsed;
 
-            ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
-            //SystemEvents_UserPreferenceChanged(null, null);
+                ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
+                //SystemEvents_UserPreferenceChanged(null, null);
 
-            //TextBlockVersion.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            LogHelper.WriteLogToFile("Ink Canvas Loaded", LogHelper.LogType.Event);
+                //TextBlockVersion.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                LogHelper.WriteLogToFile("Ink Canvas Loaded", LogHelper.LogType.Event);
 
-            var app = Application.Current;
+                var app = Application.Current;
 
-            isLoaded = true;
+                isLoaded = true;
 
-            // InitFloatingToolbarV2(); // Disabled - FloatingToolBarV2 is disabled but not deleted
+                // InitFloatingToolbarV2(); // Disabled - FloatingToolBarV2 is disabled but not deleted
 
-            BlackBoardLeftSidePageListView.ItemsSource = blackBoardSidePageListViewObservableCollection;
-            BlackBoardRightSidePageListView.ItemsSource = blackBoardSidePageListViewObservableCollection;
+                BlackBoardLeftSidePageListView.ItemsSource = blackBoardSidePageListViewObservableCollection;
+                BlackBoardRightSidePageListView.ItemsSource = blackBoardSidePageListViewObservableCollection;
 
-            BtnLeftWhiteBoardSwitchPreviousGeometry.Brush =
-                new SolidColorBrush(System.Windows.Media.Color.FromArgb(127, 24, 24, 27));
-            BtnLeftWhiteBoardSwitchPreviousLabel.Opacity = 0.5;
-            BtnRightWhiteBoardSwitchPreviousGeometry.Brush =
-                new SolidColorBrush(System.Windows.Media.Color.FromArgb(127, 24, 24, 27));
-            BtnRightWhiteBoardSwitchPreviousLabel.Opacity = 0.5;
+                BtnLeftWhiteBoardSwitchPreviousGeometry.Brush =
+                    new SolidColorBrush(System.Windows.Media.Color.FromArgb(127, 24, 24, 27));
+                BtnLeftWhiteBoardSwitchPreviousLabel.Opacity = 0.5;
+                BtnRightWhiteBoardSwitchPreviousGeometry.Brush =
+                    new SolidColorBrush(System.Windows.Media.Color.FromArgb(127, 24, 24, 27));
+                BtnRightWhiteBoardSwitchPreviousLabel.Opacity = 0.5;
 
-            BorderInkReplayToolBox.Visibility = Visibility.Collapsed;
-            BoardBackgroundPopup.Visibility = Visibility.Collapsed;
+                BorderInkReplayToolBox.Visibility = Visibility.Collapsed;
+                BoardBackgroundPopup.Visibility = Visibility.Collapsed;
 
-            // 提前加载IA库，优化第一笔等待时间
-            PreloadIALibrary();
+                // 提前加载IA库，优化第一笔等待时间
+                PreloadIALibrary();
 
-            SystemEvents.DisplaySettingsChanged += SystemEventsOnDisplaySettingsChanged;
+                SystemEvents.DisplaySettingsChanged += SystemEventsOnDisplaySettingsChanged;
 
-            if (Settings.Advanced.IsDisableCloseWindow) {
-                // Disable close button
-                IntPtr hwnd = new WindowInteropHelper(this).Handle;
-                IntPtr hMenu = GetSystemMenu(hwnd, false);
-                if (hMenu != IntPtr.Zero) {
-                    EnableMenuItem(hMenu, SC_CLOSE, MF_BYCOMMAND | MF_GRAYED);
+                if (Settings.Advanced.IsDisableCloseWindow) {
+                    // Disable close button
+                    IntPtr hwnd = new WindowInteropHelper(this).Handle;
+                    IntPtr hMenu = GetSystemMenu(hwnd, false);
+                    if (hMenu != IntPtr.Zero) {
+                        EnableMenuItem(hMenu, SC_CLOSE, MF_BYCOMMAND | MF_GRAYED);
+                    }
                 }
+
+                UpdateFloatingBarIconsLayout();
+
+                StylusInvertedListenerInit();
+
+                PenPaletteV2Init();
+                // SelectionV2Init(); // Disabled - FloatingToolBarV2 is disabled but not deleted
+                ShapeDrawingV2Init(); // Re-enabled for geometry functionality
+
+                InitStorageManagementModule();
+
+                InitFreezeWindow(new HWND[] {
+                    new HWND(new WindowInteropHelper(this).Handle)
+                });
+
+                UpdateIndexInfoDisplay();
+
+                // 立即禁用智能鼠标穿透
+                // InitSmartHitTestThrough();
+
+                SetWindowPos(new WindowInteropHelper(this).Handle, new IntPtr(-1), 0, 0, 0, 0, 0x0002|0x0040|0x0001);
             }
-
-            UpdateFloatingBarIconsLayout();
-
-            StylusInvertedListenerInit();
-
-            PenPaletteV2Init();
-            // SelectionV2Init(); // Disabled - FloatingToolBarV2 is disabled but not deleted
-            ShapeDrawingV2Init(); // Re-enabled for geometry functionality
-
-            InitStorageManagementModule();
-
-            InitFreezeWindow(new HWND[] {
-                new HWND(new WindowInteropHelper(this).Handle)
-            });
-
-            UpdateIndexInfoDisplay();
-
-            // 立即禁用智能鼠标穿透
-            // InitSmartHitTestThrough();
-
-            SetWindowPos(new WindowInteropHelper(this).Handle, new IntPtr(-1), 0, 0, 0, 0, 0x0002|0x0040|0x0001);
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile($"Error in Window_Loaded: {ex}", LogHelper.LogType.Error);
+                ShowNewMessage("应用程序加载时遇到问题，请检查日志文件以获取详细信息。");
+            }
         }
 
         private void SystemEventsOnDisplaySettingsChanged(object sender, EventArgs e) {
@@ -449,42 +457,67 @@ namespace Ink_Canvas {
 
         private void InitSmartHitTestThrough()
         {
-            hwndSource = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
-            if (hwndSource != null)
+            try
             {
-                hwndSource.AddHook(new HwndSourceHook(SmartHitTestWndProc));
+                var hwnd = new WindowInteropHelper(this).Handle;
+                if (hwnd == IntPtr.Zero)
+                {
+                    LogHelper.WriteLogToFile("Window handle is null in InitSmartHitTestThrough", LogHelper.LogType.Error);
+                    return;
+                }
+
+                hwndSource = HwndSource.FromHwnd(hwnd);
+                if (hwndSource != null)
+                {
+                    hwndSource.AddHook(new HwndSourceHook(SmartHitTestWndProc));
+                }
+                else
+                {
+                    LogHelper.WriteLogToFile("Failed to get HwndSource in InitSmartHitTestThrough", LogHelper.LogType.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile($"Error in InitSmartHitTestThrough: {ex}", LogHelper.LogType.Error);
             }
         }
 
         private IntPtr SmartHitTestWndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            if (msg == 0x0200) // WM_MOUSEMOVE
+            try
             {
-                if (isSmartHitTestThrough)
+                if (msg == 0x0200) // WM_MOUSEMOVE
                 {
-                    // 获取鼠标位置
-                    POINT cursorPos;
-                    if (!GetCursorPos(out cursorPos))
+                    if (isSmartHitTestThrough)
                     {
-                        LogHelper.WriteLogToFile("Failed to get cursor position in SmartHitTestWndProc", LogHelper.LogType.Error);
-                        return IntPtr.Zero;
-                    }
+                        // 获取鼠标位置
+                        POINT cursorPos;
+                        if (!GetCursorPos(out cursorPos))
+                        {
+                            LogHelper.WriteLogToFile("Failed to get cursor position in SmartHitTestWndProc", LogHelper.LogType.Error);
+                            return IntPtr.Zero;
+                        }
 
-                    // 转换为客户端坐标
-                    var clientPos = PointFromScreen(new System.Windows.Point(cursorPos.X, cursorPos.Y));
+                        // 转换为客户端坐标
+                        var clientPos = PointFromScreen(new System.Windows.Point(cursorPos.X, cursorPos.Y));
 
-                    // 检查鼠标是否在工具栏区域
-                    if (IsPointInFloatingBar(clientPos) || IsPointInOtherUIElements(clientPos))
-                    {
-                        // 在工具栏区域，暂时禁用穿透
-                        SetWindowTransparentStyle(hwnd, false);
-                    }
-                    else
-                    {
-                        // 在画布区域，启用穿透
-                        SetWindowTransparentStyle(hwnd, true);
+                        // 检查鼠标是否在工具栏区域
+                        if (IsPointInFloatingBar(clientPos) || IsPointInOtherUIElements(clientPos))
+                        {
+                            // 在工具栏区域，暂时禁用穿透
+                            SetWindowTransparentStyle(hwnd, false);
+                        }
+                        else
+                        {
+                            // 在画布区域，启用穿透
+                            SetWindowTransparentStyle(hwnd, true);
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile($"Error in SmartHitTestWndProc: {ex}", LogHelper.LogType.Error);
             }
 
             return IntPtr.Zero;
@@ -492,40 +525,73 @@ namespace Ink_Canvas {
 
         private bool IsPointInFloatingBar(System.Windows.Point point)
         {
-            if (ViewboxFloatingBar.Visibility != Visibility.Visible)
+            try
+            {
+                if (ViewboxFloatingBar == null || ViewboxFloatingBar.Visibility != Visibility.Visible)
+                    return false;
+
+                // 将屏幕坐标转换为相对于ViewboxFloatingBar的坐标
+                var screenPoint = PointToScreen(point);
+                var floatingBarTopLeft = ViewboxFloatingBar.PointToScreen(new System.Windows.Point(0, 0));
+                var floatingBarBottomRight = ViewboxFloatingBar.PointToScreen(
+                    new System.Windows.Point(ViewboxFloatingBar.ActualWidth, ViewboxFloatingBar.ActualHeight));
+
+                var bounds = new Rect(floatingBarTopLeft, floatingBarBottomRight);
+                return bounds.Contains(screenPoint);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile($"Error in IsPointInFloatingBar: {ex}", LogHelper.LogType.Error);
                 return false;
-                
-            var bounds = new Rect(
-                ViewboxFloatingBar.PointToScreen(new System.Windows.Point(0, 0)),
-                ViewboxFloatingBar.PointToScreen(new System.Windows.Point(ViewboxFloatingBar.ActualWidth, ViewboxFloatingBar.ActualHeight)));
-            
-            return bounds.Contains(PointToScreen(point));
+            }
         }
 
         private bool IsPointInOtherUIElements(System.Windows.Point point)
         {
-            // 检查其他需要保持可点击的UI元素
-            // 例如：设置面板、画笔面板等
-            
-            if (BorderSettings.Visibility == Visibility.Visible)
+            try
             {
-                var settingsBounds = new Rect(
-                    BorderSettings.PointToScreen(new System.Windows.Point(0, 0)),
-                    BorderSettings.PointToScreen(new System.Windows.Point(BorderSettings.ActualWidth, BorderSettings.ActualHeight)));
-                if (settingsBounds.Contains(PointToScreen(point)))
-                    return true;
+                var screenPoint = PointToScreen(point);
+
+                // 检查设置面板
+                if (BorderSettings != null && BorderSettings.Visibility == Visibility.Visible)
+                {
+                    var settingsTopLeft = BorderSettings.PointToScreen(new System.Windows.Point(0, 0));
+                    var settingsBottomRight = BorderSettings.PointToScreen(
+                        new System.Windows.Point(BorderSettings.ActualWidth, BorderSettings.ActualHeight));
+                    var settingsBounds = new Rect(settingsTopLeft, settingsBottomRight);
+                    if (settingsBounds.Contains(screenPoint))
+                        return true;
+                }
+
+                // 检查画笔控制面板
+                if (StackPanelCanvasControls != null && StackPanelCanvasControls.Visibility == Visibility.Visible)
+                {
+                    var canvasControlsTopLeft = StackPanelCanvasControls.PointToScreen(new System.Windows.Point(0, 0));
+                    var canvasControlsBottomRight = StackPanelCanvasControls.PointToScreen(
+                        new System.Windows.Point(StackPanelCanvasControls.ActualWidth, StackPanelCanvasControls.ActualHeight));
+                    var canvasControlsBounds = new Rect(canvasControlsTopLeft, canvasControlsBottomRight);
+                    if (canvasControlsBounds.Contains(screenPoint))
+                        return true;
+                }
+
+                // 检查画板工具栏
+                if (BoardBorderTools != null && BoardBorderTools.Visibility == Visibility.Visible)
+                {
+                    var boardToolsTopLeft = BoardBorderTools.PointToScreen(new System.Windows.Point(0, 0));
+                    var boardToolsBottomRight = BoardBorderTools.PointToScreen(
+                        new System.Windows.Point(BoardBorderTools.ActualWidth, BoardBorderTools.ActualHeight));
+                    var boardToolsBounds = new Rect(boardToolsTopLeft, boardToolsBottomRight);
+                    if (boardToolsBounds.Contains(screenPoint))
+                        return true;
+                }
+
+                return false;
             }
-            
-            if (StackPanelCanvasControls.Visibility == Visibility.Visible)
+            catch (Exception ex)
             {
-                var canvasControlsBounds = new Rect(
-                    StackPanelCanvasControls.PointToScreen(new System.Windows.Point(0, 0)),
-                    StackPanelCanvasControls.PointToScreen(new System.Windows.Point(StackPanelCanvasControls.ActualWidth, StackPanelCanvasControls.ActualHeight)));
-                if (canvasControlsBounds.Contains(PointToScreen(point)))
-                    return true;
+                LogHelper.WriteLogToFile($"Error in IsPointInOtherUIElements: {ex}", LogHelper.LogType.Error);
+                return false;
             }
-            
-            return false;
         }
 
         private static IntPtr GetWindowLongPtrSmart(IntPtr hWnd, int nIndex)
@@ -556,25 +622,56 @@ namespace Ink_Canvas {
 
         private void SetWindowTransparentStyle(IntPtr hwnd, bool transparent)
         {
-            var currentStyle = GetWindowLongPtrSmart(hwnd, GWL_EXSTYLE_SMART);
-            if (transparent)
+            try
             {
-                SetWindowLongPtrSmart(hwnd, GWL_EXSTYLE_SMART, new IntPtr(currentStyle.ToInt64() | WS_EX_TRANSPARENT));
+                if (hwnd == IntPtr.Zero)
+                {
+                    LogHelper.WriteLogToFile("Window handle is null in SetWindowTransparentStyle", LogHelper.LogType.Error);
+                    return;
+                }
+
+                var currentStyle = GetWindowLongPtrSmart(hwnd, GWL_EXSTYLE_SMART);
+                IntPtr newStyle;
+
+                if (transparent)
+                {
+                    newStyle = new IntPtr(currentStyle.ToInt64() | WS_EX_TRANSPARENT);
+                }
+                else
+                {
+                    newStyle = new IntPtr(currentStyle.ToInt64() & ~WS_EX_TRANSPARENT);
+                }
+
+                SetWindowLongPtrSmart(hwnd, GWL_EXSTYLE_SMART, newStyle);
             }
-            else
+            catch (Exception ex)
             {
-                SetWindowLongPtrSmart(hwnd, GWL_EXSTYLE_SMART, new IntPtr(currentStyle.ToInt64() & ~WS_EX_TRANSPARENT));
+                LogHelper.WriteLogToFile($"Error in SetWindowTransparentStyle: {ex}", LogHelper.LogType.Error);
             }
         }
 
         public void SetSmartHitTestThrough(bool enabled)
         {
-            isSmartHitTestThrough = enabled;
-            if (!enabled)
+            try
             {
-                // 禁用智能穿透，移除WS_EX_TRANSPARENT样式
+                isSmartHitTestThrough = enabled;
                 var hwnd = new WindowInteropHelper(this).Handle;
-                SetWindowTransparentStyle(hwnd, false);
+
+                if (hwnd == IntPtr.Zero)
+                {
+                    LogHelper.WriteLogToFile("Window handle is null in SetSmartHitTestThrough", LogHelper.LogType.Error);
+                    return;
+                }
+
+                if (!enabled)
+                {
+                    // 禁用智能穿透，移除WS_EX_TRANSPARENT样式
+                    SetWindowTransparentStyle(hwnd, false);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogToFile($"Error in SetSmartHitTestThrough: {ex}", LogHelper.LogType.Error);
             }
         }
 

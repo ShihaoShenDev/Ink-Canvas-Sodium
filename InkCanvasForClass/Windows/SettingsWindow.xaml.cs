@@ -202,7 +202,7 @@ namespace Ink_Canvas.Windows {
             }
             catch (Exception ex) {
                 LogHelper.WriteLogToFile($"Error initializing SettingsWindow: {ex}", LogHelper.LogType.Error);
-                System.Windows.MessageBox.Show($"设置窗口初始化失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show($"设置窗口初始化遇到问题：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

@@ -61,7 +61,7 @@ namespace Ink_Canvas {
                 }
                 else {
                     // 其他异常显示通用消息
-                    Ink_Canvas.MainWindow.ShowNewMessage("抱歉，出现未预期的异常，可能导致 InkCanvasForClass 运行不稳定。\n建议保存墨迹后重启应用。");
+                    Ink_Canvas.MainWindow.ShowNewMessage("应用程序遇到意外问题，可能导致运行不稳定。\n建议保存墨迹后重启应用。");
                 }
             }
             catch (Exception logEx) {

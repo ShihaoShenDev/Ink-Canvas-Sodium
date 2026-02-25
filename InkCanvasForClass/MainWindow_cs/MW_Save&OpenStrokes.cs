@@ -38,8 +38,8 @@ namespace Ink_Canvas {
                 if (newNotice) ShowNewToast("墨迹成功保存至 " + savePathWithName, MW_Toast.ToastType.Success, 2500);
             }
             catch (Exception ex) {
-                ShowNewToast("墨迹保存失败！", MW_Toast.ToastType.Error, 3000);
-                LogHelper.WriteLogToFile("墨迹保存失败 | " + ex.ToString(), LogHelper.LogType.Error);
+                ShowNewToast("墨迹保存遇到问题！", MW_Toast.ToastType.Error, 3000);
+                LogHelper.WriteLogToFile("墨迹保存遇到问题 | " + ex.ToString(), LogHelper.LogType.Error);
             }
         }
 
@@ -81,7 +81,7 @@ namespace Ink_Canvas {
                 if (inkCanvas.Visibility != Visibility.Visible) SymbolIconCursor_Click(sender, null);
             }
             catch {
-                ShowNewToast("墨迹打开失败！", MW_Toast.ToastType.Error, 3000);
+                ShowNewToast("墨迹打开遇到问题！", MW_Toast.ToastType.Error, 3000);
             }
         }
     }

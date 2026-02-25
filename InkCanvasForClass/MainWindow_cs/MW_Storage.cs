@@ -310,7 +310,7 @@ namespace Ink_Canvas {
                 ShowNewToast("清理缓存成功！", MW_Toast.ToastType.Success, 2000);
             }
             catch (Exception ex) {
-                ShowNewToast($"清理缓存失败！{ex.Message}", MW_Toast.ToastType.Error, 2000);
+                ShowNewToast($"清理缓存遇到问题！{ex.Message}", MW_Toast.ToastType.Error, 2000);
             }
             InitStorageFoldersStructure(storageLocationItems[ComboBoxStoragePath.SelectedIndex].Path);
             StartAnalyzeStorage();
@@ -323,7 +323,7 @@ namespace Ink_Canvas {
                 ShowNewToast("清理自动保存的截图成功！", MW_Toast.ToastType.Success, 2000);
             }
             catch (Exception ex) {
-                ShowNewToast($"清理自动保存的截图失败！{ex.Message}", MW_Toast.ToastType.Error, 2000);
+                ShowNewToast($"清理自动保存的截图遇到问题！{ex.Message}", MW_Toast.ToastType.Error, 2000);
             }
             InitStorageFoldersStructure(storageLocationItems[ComboBoxStoragePath.SelectedIndex].Path);
             StartAnalyzeStorage();

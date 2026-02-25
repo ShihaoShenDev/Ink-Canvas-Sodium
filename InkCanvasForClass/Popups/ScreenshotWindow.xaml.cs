@@ -260,7 +260,7 @@ namespace Ink_Canvas.Popups
             catch (Exception e) {
                 LoadingOverlay.Visibility = Visibility.Collapsed;
                 MainFuncPanel.Effect = null;
-                mainWindow.ShowNewToast($"截图失败！{e.Message}", MW_Toast.ToastType.Error, 3000);
+                mainWindow.ShowNewToast($"截图遇到问题：{e.Message}", MW_Toast.ToastType.Error, 3000);
                 await Task.Delay(1);
                 Close();
             }
@@ -360,7 +360,7 @@ namespace Ink_Canvas.Popups
                     isWindowsSnapshotLoaded = true;
                 } catch (Exception ex) {
                     LogHelper.NewLog(ex);
-                    mainWindow.ShowNewToast("获取窗口列表失败", MW_Toast.ToastType.Error, 3000);
+                    mainWindow.ShowNewToast("获取窗口列表时遇到问题", MW_Toast.ToastType.Error, 3000);
                     Close();
                 }
             }
