@@ -25,8 +25,8 @@ jobs:
       with:
         dotnet-version: 11.0.x
 
-    - name: Publish
-      run: dotnet publish -c Release --self-contained true -r win-x64 -o dist
+    - name: Publish binary
+      run: dotnet publish -c Release --self-contained true -r win-x64 -o dist -p:PublishSingleFile=true
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
